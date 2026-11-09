@@ -2,7 +2,9 @@
 
 The landing page for [Nearby](https://github.com/1004740/nearby), the local news app. It explains what the app does and collects launch sign-ups by postcode district, so you can see which areas to launch in first.
 
-It's one static page: `index.html`, with its settings in `config.js`. There's no build step.
+It's one static page: `index.html`, with its settings in `config.js`. There's no build step. `privacy.html` is the privacy notice for the launch list, `og-image.png` is the picture shown when the link is shared, and `apple-touch-icon.png` is the home-screen icon.
+
+The fonts (Young Serif and Hanken Grotesk) are free under the SIL Open Font Licence. The map, icons and logo are inline SVG drawn for this page.
 
 ## Turning sign-ups on
 
@@ -25,13 +27,13 @@ Only you can read these. The website can only write to them.
 
 ## Publishing the site
 
-GitHub Pages can host it for free: **Settings → Pages → Deploy from a branch → `main` / root**. The site appears at `https://1004740.github.io/nearby-site/`. A custom domain can be added on the same page later.
+GitHub Pages can host it for free: **Settings → Pages → Deploy from a branch → `main` / root**. The site appears at `https://1004740.github.io/nearby-site/`. A custom domain can be added on the same page later. If you add one, update the `og:url` and `og:image` addresses at the top of `index.html`.
 
 ## Privacy
 
 - Only the first half of a postcode (for example M1) is stored, never the full postcode.
 - Consent to be emailed is required and stored with each sign-up.
-- Before going live, add a privacy notice link that covers the waitlist. It's on the launch checklist in the build plan.
+- `privacy.html` covers the waitlist and is linked from the form and the footer. Before going live, fill in the highlighted placeholders: who runs Nearby, a contact email, where the Supabase project is hosted, and how long sign-ups are kept.
 
 ## History
 
