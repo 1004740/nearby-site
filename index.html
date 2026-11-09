@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nearby: what's happening on your doorstep</title>
+<meta name="description" content="Local news, events, safety updates and planning applications for your postcode, plus your neighbours. Coming soon to iPhone and Android.">
+<meta property="og:title" content="Nearby">
+<meta property="og:description" content="Everything happening on your doorstep, in one calm feed. Join the launch list.">
+<meta name="theme-color" content="#d3202f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23d3202f'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='900' font-size='19' text-anchor='middle' fill='white'%3EN%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a hero with the phone feed beside the pitch, then four short bands. Postbox red is the one bold note; street-sign blue is the postcode plate. */
+:root{
+  --ground:#eef1f4; --surface:#ffffff; --ink:#16202b; --muted:#56636f; --line:#d9dfe6; --tint:#f6f8fa;
+  --red:#d3202f; --red-ink:#ffffff; --sign:#0f3d5c; --sign-ink:#ffffff;
+  --news:#2a5fa8; --events:#7a3fb0; --safety:#b54708; --planning:#1f7a52; --community:#a3266a; --ok:#1f7a52;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --ground:#0c1117; --surface:#151c24; --ink:#e8edf2; --muted:#9aa7b4; --line:#26313c; --tint:#1b242e;
+  --red:#ef4452; --sign:#1d5f8a;
+  --news:#7aa7ec; --events:#c39af0; --safety:#f3a35c; --planning:#5fcf98; --community:#ef86bf; --ok:#5fcf98;
+  color-scheme:dark }}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;padding-block:20px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.mark{width:34px;height:34px;border-radius:10px;background:var(--red);color:var(--red-ink);display:grid;place-items:center;font-family:var(--display);font-weight:800}
+.brand b{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:-.01em}
+.bar a.cta{font-weight:700;text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-size:.95rem}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center;padding-block:28px 64px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,5.6vw,4.2rem);line-height:1.02;letter-spacing:-.03em;margin:0 0 18px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--red)}
+.lede{font-size:1.18rem;color:var(--muted);max-width:34ch;margin:0 0 28px}
+.plate-row{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;max-width:460px}
+.plate{font-family:var(--mono);font-weight:700;font-size:1.35rem;letter-spacing:.1em;text-transform:uppercase;text-align:center;
+  background:var(--sign);color:var(--sign-ink);border:none;border-radius:10px;padding:14px 16px;flex:1 1 180px;min-width:0}
+.plate::placeholder{color:rgba(255,255,255,.5)}
+.btn{font:inherit;font-weight:700;border-radius:12px;padding:14px 20px;border:1px solid transparent;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.red{background:var(--red);color:var(--red-ink)}
+.btn.red:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.55;cursor:wait}
+.hint{font-size:.9rem;color:var(--muted);margin:10px 0 0}
+
+/* phone */
+.phone{justify-self:center;width:100%;max-width:340px;background:var(--surface);border:1px solid var(--line);border-radius:32px;overflow:hidden;
+  box-shadow:0 30px 60px -30px rgba(15,61,92,.45)}
+.ph-top{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
+.ph-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ph-top small{display:block;color:var(--muted);font-size:.72rem}
+.ph-top strong{font-family:var(--display);font-weight:800;font-size:1.15rem}
+.mini-plate{font-family:var(--mono);font-weight:700;font-size:.72rem;letter-spacing:.06em;background:var(--sign);color:var(--sign-ink);border-radius:5px;padding:4px 7px}
+.chips{display:flex;gap:5px;margin-top:10px;overflow:hidden}
+.chip{font-size:.72rem;border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.item{display:grid;grid-template-columns:4px 1fr;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:none}
+.stripe{border-radius:4px;background:var(--c)}
+.meta{display:flex;gap:7px;font-size:.68rem;color:var(--muted)}
+.kind{color:var(--c);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.item h3{margin:2px 0 0;font-size:.88rem;line-height:1.3}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* sections */
+section{padding-block:64px;border-top:1px solid var(--line)}
+section h2{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,3.6vw,2.6rem);line-height:1.08;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance;max-width:22ch}
+.sub{color:var(--muted);max-width:60ch;margin:0 0 32px}
+.kinds{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.kindcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;border-top:4px solid var(--c)}
+.kindcard b{display:block;color:var(--c);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.kindcard p{margin:0;font-size:.97rem}
+.kindcard small{display:block;color:var(--muted);font-size:.8rem;margin-top:10px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;counter-reset:s;padding:0;margin:0;list-style:none}
+.steps li{counter-increment:s;min-width:0}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--surface);font-weight:700;margin-bottom:12px}
+.steps h3,.promise h3{margin:0 0 6px;font-size:1.08rem}
+.steps p,.promise p{margin:0;color:var(--muted)}
+.promises{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 48px;max-width:860px}
+@media (max-width:620px){.promises{grid-template-columns:1fr}}
+.promise{min-width:0}
+
+/* sign-up */
+.signup{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(24px,4vw,44px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;align-items:start}
+form{display:grid;gap:14px}
+label{font-weight:700;font-size:.92rem;display:block;margin-bottom:6px}
+label span{font-weight:400;color:var(--muted)}
+.field{width:100%;font:inherit;border:1px solid var(--line);background:var(--tint);color:var(--ink);border-radius:12px;padding:13px 14px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.93rem}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--red);flex-shrink:0}
+.msg{min-height:1.4em;font-size:.95rem;margin:0}
+.msg.err{color:var(--red)} .msg.ok{color:var(--ok);font-weight:700}
+.fine{font-size:.85rem;color:var(--muted);margin:0}
+
+footer{padding-block:36px 48px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;gap:40px;padding-bottom:48px}
+  .signup{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr;gap:22px}
+  section{padding-block:48px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="brand" href="#top" aria-label="Nearby home"><span class="mark" aria-hidden="true">N</span><b>Nearby</b></a>
+    <a class="cta" href="#join">Join the launch list</a>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div>
+        <h1>What's happening on <em>your doorstep</em>, in one calm feed.</h1>
+        <p class="lede">Local news, events, police updates and planning applications for your postcode, plus your neighbours. Coming soon to iPhone and Android.</p>
+        <form id="quick" class="plate-row" novalidate>
+          <label for="quick-pc" class="visually-hidden" style="position:absolute;left:-9999px">Your postcode</label>
+          <input class="plate" id="quick-pc" placeholder="SW1A 1AA" maxlength="9" autocomplete="postal-code" autocapitalize="characters" spellcheck="false">
+          <button class="btn red" type="submit">Get early access</button>
+        </form>
+        <p class="hint">We use the first half of your postcode to decide where to launch first.</p>
+      </div>
+
+      <div class="phone" aria-label="Example of the Nearby feed" role="img">
+        <div class="ph-top">
+          <div class="ph-row">
+            <div><small>Piccadilly ward · Manchester</small><strong>Manchester centre</strong></div>
+            <span class="mini-plate">M1 1AE</span>
+          </div>
+          <div class="chips"><span class="chip on">All</span><span class="chip">News</span><span class="chip">Events</span><span class="chip">Safety</span><span class="chip">Planning</span></div>
+        </div>
+        <div class="item" style="--c:var(--planning)"><span class="stripe"></span><div><div class="meta"><span class="kind">Planning</span><span class="mono">180 m</span><span>2h ago</span></div><h3>New application: office floors to 48 flats, Portland Street</h3></div></div>
+        <div class="item" style="--c:var(--community)"><span class="stripe"></span><div><div class="meta"><span class="kind">Neighbours</span><span class="mono">200 m</span><span>35m ago</span></div><h3>Anyone else lost water pressure on Dale Street?</h3></div></div>
+        <div class="item" style="--c:var(--events)"><span class="stripe"></span><div><div class="meta"><span class="kind">Events</span><span class="mono">600 m</span><span>Thu</span></div><h3>Christmas market opens in the city centre</h3></div></div>
+        <div class="item" style="--c:var(--safety)"><span class="stripe"></span><div><div class="meta"><span class="kind">Safety</span><span class="mono">400 m</span><span>Sept</span></div><h3>Bicycle theft: 14 reports near Piccadilly station</h3></div></div>
+        <div class="item" style="--c:var(--news)"><span class="stripe"></span><div><div class="meta"><span class="kind">News</span><span class="mono">1.1 km</span><span>Yesterday</span></div><h3>Late-night bus route through Ancoats from December</h3></div></div>
+      </div>
+    </div>
+
+    <section aria-labelledby="feed-h">
+      <h2 id="feed-h">Five kinds of local news. One place to read them.</h2>
+      <p class="sub">Today this lives across council websites, Facebook groups, police pages and the local paper. Nearby brings it together for the streets around you, nearest first.</p>
+      <div class="kinds">
+        <div class="kindcard" style="--c:var(--planning)"><b>Planning</b><p>New applications and decisions near you, so you hear about the block of flats before the scaffolding goes up.</p><small>From council planning registers</small></div>
+        <div class="kindcard" style="--c:var(--safety)"><b>Safety</b><p>Police-reported crime by street, summarised each month so you can see what's changing.</p><small>From police.uk</small></div>
+        <div class="kindcard" style="--c:var(--events)"><b>Events</b><p>Markets, fairs, repair cafés and gigs within walking distance.</p><small>From local listings</small></div>
+        <div class="kindcard" style="--c:var(--news)"><b>News</b><p>Headlines from local outlets, linked to the original story.</p><small>From local publishers</small></div>
+        <div class="kindcard" style="--c:var(--community)"><b>Neighbours</b><p>Lost cats, plumber recommendations and street parties, from people who actually live nearby.</p><small>From verified locals</small></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="how-h">
+      <h2 id="how-h">Set up in under a minute</h2>
+      <ol class="steps">
+        <li><h3>Sign in</h3><p>With Apple, Google or a code sent to your email. No passwords to remember.</p></li>
+        <li><h3>Enter your postcode</h3><p>Nearby finds your ward and council and starts pulling in what's happening around you.</p></li>
+        <li><h3>Read, filter, post</h3><p>Choose how far to look, from half a kilometre to five, and share things with your neighbours.</p></li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="privacy-h">
+      <h2 id="privacy-h">Built for neighbours, not for trolls</h2>
+      <div class="promises">
+        <div class="promise"><h3>Your full postcode stays private</h3><p>Other people only ever see the first half, like M1. Posts are placed about 100 m from your home, never on it.</p></div>
+        <div class="promise"><h3>Real locals only</h3><p>Your postcode is checked before you can post, so outsiders can't stir up your street.</p></div>
+        <div class="promise"><h3>Moderated from day one</h3><p>Reports go to a real person. Posts reported by several neighbours are hidden until they're checked.</p></div>
+        <div class="promise"><h3>Leave whenever you like</h3><p>Delete your account in the app and your posts and postcode go with it.</p></div>
+      </div>
+    </section>
+
+    <section id="join" aria-labelledby="join-h">
+      <div class="signup">
+        <div>
+          <h2 id="join-h">Be first on your street</h2>
+          <p class="sub" style="margin-bottom:16px">Nearby launches one city at a time. Tell us where you are, and we'll email you when it reaches you. That's the only email you'll get.</p>
+          <p class="fine">Areas with the most sign-ups go first.</p>
+        </div>
+        <form id="join-form" novalidate>
+          <div>
+            <label for="email">Email</label>
+            <input class="field" id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div>
+            <label for="postcode">Postcode <span>(we only keep the first half)</span></label>
+            <input class="field" id="postcode" name="postcode" autocomplete="postal-code" placeholder="M1 1AE" maxlength="9" style="font-family:var(--mono);text-transform:uppercase">
+          </div>
+          <label class="check" for="consent" style="font-weight:400">
+            <input type="checkbox" id="consent" name="consent">
+            <span>Email me when Nearby launches in my area. I can unsubscribe at any time.</span>
+          </label>
+          <button class="btn red" type="submit" id="join-btn">Join the launch list</button>
+          <p class="msg" id="join-msg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <span id="year">2026</span> Nearby</span>
+    <span>Data: police.uk and planning.data.gov.uk, under the Open Government Licence.</span>
+  </footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  "use strict";
+  var cfg = window.NEARBY_CONFIG || {};
+  var PC = /^([A-Z]{1,2}\d[A-Z\d]?)\s*(\d[A-Z]{2})$/;
+  var OUT = /^[A-Z]{1,2}\d[A-Z\d]?$/;
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Accept a full postcode ("m1 1ae") or just the first half ("M1"). Returns the first half, "" if blank, or null if invalid.
+  function outcodeOf(value) {
+    var v = String(value || "").toUpperCase().replace(/[^A-Z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+    if (!v) return "";
+    var full = v.replace(/ /g, "").match(PC);
+    if (full) return full[1];
+    return OUT.test(v) ? v : null;
+  }
+
+  // The hero's postcode box just carries the postcode down to the sign-up form.
+  document.getElementById("quick").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = document.getElementById("quick-pc").value;
+    document.getElementById("postcode").value = v.toUpperCase();
+    document.getElementById("join").scrollIntoView({ block: "start" });
+    document.getElementById("email").focus({ preventScroll: true });
+  });
+
+  var form = document.getElementById("join-form");
+  var msg = document.getElementById("join-msg");
+  var btn = document.getElementById("join-btn");
+
+  function say(text, kind) {
+    msg.textContent = text;
+    msg.className = "msg " + (kind || "");
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var email = form.email.value.trim();
+    var outcode = outcodeOf(form.postcode.value);
+
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return say("Enter a valid email address, like you@example.com.", "err");
+    if (outcode === null) return say("That doesn't look like a UK postcode. Try something like M1 1AE, or leave it blank.", "err");
+    if (!form.consent.checked) return say("Tick the box so we're allowed to email you when Nearby launches.", "err");
+    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return say("Sign-ups aren't open yet. Check back soon.", "err");
+
+    btn.disabled = true;
+    say("Adding you to the list…");
+    try {
+      var res = await fetch(cfg.supabaseUrl.replace(/\/$/, "") + "/rest/v1/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: cfg.supabaseAnonKey,
+          Authorization: "Bearer " + cfg.supabaseAnonKey,
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({ email: email, outcode: outcode || null, consent: true, source: "landing" }),
+      });
+      // 409 means this email is already on the list, which is fine.
+      if (res.ok || res.status === 409) {
+        form.reset();
+        say(outcode ? "You're on the list. We'll email you when Nearby reaches " + outcode + "." : "You're on the list. We'll email you when Nearby launches.", "ok");
+      } else {
+        say("That didn't go through. Try again in a minute.", "err");
+      }
+    } catch (err) {
+      say("We couldn't reach the server. Check your connection and try again.", "err");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
