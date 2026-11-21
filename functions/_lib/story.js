@@ -1,9 +1,10 @@
 // Story pages: /s/[id], /c/[id], /e/[id]. Fetches the `story` Edge Function, renders HTML. Never a 404.
+import { SECURITY_HEADERS } from "./headers.js";
 import { esc, formatDay, formatTime, isClosed, isType, isUuid, safeUrl, parseConfigJs, clip } from "./util.js";
 
 const DEFAULT_SITE = "https://dearborough.london";
 const TAGLINE = "Council news, road changes and decisions for your area.";
-const KIND = { s: "News", c: "Consultation", e: "Event" };
+const KIND = { s: "Update", c: "Consultation", e: "Event" };
 
 /** Settings: Pages environment variables win, then config.js (served from the same site). */
 export async function loadConfig(env, requestUrl) {
@@ -24,7 +25,8 @@ export async function loadConfig(env, requestUrl) {
 
 async function fetchStory(cfg, type, id) {
   const url = `${cfg.supabaseUrl}/functions/v1/story?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`;
-  const res = await fetch(url, { headers: { apikey: cfg.anonKey, Authorization: `Bearer ${cfg.anonKey}` } });
+  // No key: the story function has verify_jwt = false. Server to server, so CORS does not apply.
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error(`story ${res.status}`);
   return res.json();
 }
@@ -54,6 +56,7 @@ function body(type, s, now) {
   }
   if (s.summary) parts.push(`<p>${esc(s.summary)}</p>`);
   if (type === "e") {
+    if (s.status === "closed") parts.push(`<p class="notice">This event has finished.</p>`);
     if (s.status === "cancelled") {
       parts.push(`<p class="notice">${esc(s.source || "The organiser")} says this event is cancelled.</p>`);
     }
@@ -71,7 +74,7 @@ function waitlist(type, id) {
   const path = `/${type}/${id}`;
   return `<section class="block" id="waitlist" aria-labelledby="wl-h">
 <div class="panel">
-<form id="join-form" data-waitlist data-source="story-${type}" data-from="${esc(path)}" novalidate>
+<form id="join-form" method="post" action="/" data-waitlist data-source="story-${type}" data-from="${esc(path)}" novalidate>
 <h2 id="wl-h">Get deadline reminders in the app</h2>
 <p class="muted">Join the waitlist. We're opening Dear Borough to Havering residents in stages, and we'll email you when it's your turn.</p>
 <p class="notice" id="closed" hidden>Sign-ups aren't open yet. Check back soon.</p>
@@ -85,7 +88,7 @@ function waitlist(type, id) {
 </form>
 <noscript><p class="notice">This form needs JavaScript. Turn it on, or <a href="/letter">get the Letter by email</a> instead.</p></noscript>
 </div>
-<p><a class="app-link" href="dearborough://${type}/${esc(id)}">Open in the app</a></p>
+<!-- App link left out until the app handles these links. -->
 </section>`;
 }
 
@@ -136,7 +139,7 @@ ${removed ? '<meta name="robots" content="noindex">' : ""}
 </header>
 <main id="main">
 ${body(type, s || { status: "removed" }, now)}
-${removed ? "" : waitlist(type, id)}
+${removed || (type === "e" && s.status === "closed") ? "" : waitlist(type, id)}
 </main>
 <footer>
   <a href="/privacy">Privacy notice</a><a href="/letter">Get the Letter</a><a href="/">Home</a>
@@ -149,7 +152,8 @@ ${removed ? "" : '<script src="/assets/forms.js"></script>\n<script src="/assets
 }
 
 function html(body, status, cache) {
-  return new Response(body, { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": cache } });
+  // _headers does not apply to Pages Functions responses, so the security headers are set here (and in _middleware.js).
+  return new Response(body, { status, headers: { ...SECURITY_HEADERS, "Content-Type": "text/html; charset=utf-8", "Cache-Control": cache } });
 }
 
 /** Shared by the three route files. */

@@ -28,7 +28,7 @@
 <p class="lede">Every Monday: what's changing in Havering, open consultations with their closing dates, and what's on.</p>
 <div class="panel">
   <p class="notice" id="closed" hidden>Sign-ups for the Letter aren't open yet. Check back soon.</p>
-  <form id="letter-form" novalidate>
+  <form id="letter-form" method="post" action="/letter" novalidate>
     <div class="fieldgroup">
       <label class="f" for="email">Email address</label>
       <input class="field" id="email" name="email" type="email" autocomplete="email" inputmode="email" aria-describedby="email-err">

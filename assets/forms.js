@@ -22,6 +22,12 @@
       if (!input) return;
       if (text) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
     },
+    // For our own Edge Functions (letter-subscribe, story): verify_jwt is false, so no key is sent. Only Content-Type, so the
+    // browser's preflight asks for nothing the function's CORS answer does not allow.
+    functionHeaders: function () {
+      return { "Content-Type": "application/json" };
+    },
+    // For the waitlist table (PostgREST), which does need the public anon key.
     headers: function () {
       return { "Content-Type": "application/json", apikey: cfg.supabaseAnonKey, Authorization: "Bearer " + cfg.supabaseAnonKey };
     }

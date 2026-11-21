@@ -56,7 +56,7 @@
     btn.textContent = "Sending…";
     fetch(F.supabaseUrl + "/functions/v1/letter-subscribe", {
       method: "POST",
-      headers: F.headers(),
+      headers: F.functionHeaders(),
       body: JSON.stringify({ email: email, consent: true, consent_version: CONSENT_VERSION, turnstile_token: token, source_path: location.pathname })
     }).then(function (res) {
       if (res.ok) {

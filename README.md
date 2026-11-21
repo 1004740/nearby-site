@@ -15,7 +15,8 @@ The public website for Dear Borough: the landing page, the weekly Letter sign-up
 | `functions/_lib/` | Helpers the functions use (escaping, London dates). Tested in `test/` |
 | `assets/` | Brand files (D seal, wordmark, icons), `og-image.png`, CSS and the form scripts |
 | `config.js` | Settings: `SITE_URL`, `supabaseUrl`, `supabaseAnonKey`, `turnstileSiteKey` |
-| `_headers`, `_routes.json` | Security headers; limits Functions to the story paths |
+| `_headers`, `_routes.json` | Security headers for static files; limits Functions to the story paths |
+| `functions/_middleware.js`, `functions/_lib/headers.js` | The same security headers on Function responses (`_headers` does not cover them). A test fails if the two lists differ |
 | `.well-known/apple-app-site-association` | Placeholder for universal links |
 
 The contract with the backend (function names, paths, the `story` JSON) is `project/engineering/contracts-web.md` in the app repo.
@@ -45,11 +46,11 @@ The domain isn't bought yet, so `https://dearborough.london` is a placeholder. W
 - Add it under the Pages project's **Custom domains**.
 - Change it in `config.js` and in the canonical, `og:url` and `og:image` lines at the top of `index.html`.
 - Update the `SITE_URL` secret on the Edge Functions.
-- Tighten `https://*.supabase.co` in `_headers` to your project URL if you like.
+- Tighten `https://*.supabase.co` to your project URL if you like, in BOTH `_headers` and `functions/_lib/headers.js` (a test checks they match).
 
 ## Universal links (iOS)
 
-`.well-known/apple-app-site-association` is a placeholder. **TODO(owner):** replace `TEAMID` with your Apple Developer Team ID before the app ships. `_headers` serves it as `application/json`. The "Open in the app" link on story pages uses the `dearborough://` scheme and does nothing if the app isn't installed.
+`.well-known/apple-app-site-association` is a placeholder. **TODO(owner):** replace `TEAMID` with your Apple Developer Team ID before the app ships. `_headers` serves it as `application/json`. Story pages have no "Open in the app" link yet: it comes back when the app handles `/s`, `/c` and `/e` links. `/letter` is listed so app users who open it land in the app (never offered the email Letter): confirm that is intended.
 
 ## Seeing who signed up
 

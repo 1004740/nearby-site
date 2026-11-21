@@ -33,6 +33,7 @@
 <li>Your email address.</li>
 <li>A record of your consent: that you ticked the box, the wording version (for example letter-2026-11), the time, and the page you signed up on.</li>
 <li>Whether you have confirmed your address or unsubscribed, and when.</li>
+<li>To stop abuse of the sign-up form, a scrambled (hashed) form of your email address and of your IP address, made with a secret key. We can't turn it back into the original, but it is still personal data. We delete it within 24 hours of the sign-up request, and at the latest after 7 days.</li>
 </ul>
 <p>We use it to send you the Letter once a week and one email to confirm your address. Our lawful basis is your consent. You confirm by clicking the link in the first email, and nothing more is sent until you do. Every Letter has an unsubscribe link. Unsubscribing takes effect straight away.</p>
 
@@ -47,7 +48,7 @@
 <h2>Who processes it for us</h2>
 <ul>
 <li><strong>Supabase</strong> stores the Letter list and the waitlist. <mark>[Confirm the Supabase project region. The plan is London; if it is not, say where and what safeguard covers transfers outside the UK.]</mark></li>
-<li><strong>Resend</strong> sends the confirmation email and the Letter, so it receives your email address.</li>
+<li><strong>Resend</strong> sends the confirmation email and the Letter, so it receives your email address. Resend is based in the United States. <mark>[Name the safeguard for that transfer, for example the UK-US data bridge or the UK addendum to the standard contractual clauses, as for Supabase above.]</mark></li>
 <li><strong>Cloudflare</strong> hosts this website and runs Turnstile, the check on the Letter form that tells people from bots. Cloudflare handles technical information about your visit to do this. See Cloudflare's privacy policy for details.</li>
 </ul>
 <p>We don't sell your details or share them with advertisers.</p>
@@ -56,7 +57,14 @@
 <p>When someone shares a link to a story, consultation or event, the page shows public information from the source named on it. We don't collect personal data from reading these pages.</p>
 
 <h2>How long we keep it</h2>
-<p>We keep your Letter details until you unsubscribe, and the record of your consent <mark>[for how long after unsubscribing, and why]</mark>. We keep waitlist details until Dear Borough opens to you and we've emailed you, or until you ask us to remove them. <mark>[Add a maximum period, for example 2 years.]</mark> Addresses that never confirm are deleted after <mark>[period]</mark>.</p>
+<p>The Letter:</p>
+<ul>
+<li>Your email address and consent record are kept while you are subscribed.</li>
+<li>If you sign up but never confirm, we delete your details 30 days after we send the confirmation email.</li>
+<li>If you unsubscribe, we delete your details, including your address at Resend, 30 days after you unsubscribe. We keep them for that long so that your unsubscribe is respected and we can show when it happened.</li>
+<li>The scrambled abuse-prevention data is deleted as described above.</li>
+</ul>
+<p>We keep waitlist details until Dear Borough opens to you and we've emailed you, or until you ask us to remove them. <mark>[Add a maximum period for the waitlist, for example 2 years.]</mark></p>
 
 <h2>Your rights</h2>
 <p>You can withdraw consent, unsubscribe, or ask to see, correct or delete your details at any time by emailing <mark>[email address]</mark>. If you're unhappy with how we've handled your data, you can complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/">ico.org.uk</a>.</p>

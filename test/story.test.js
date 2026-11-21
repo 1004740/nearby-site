@@ -46,10 +46,14 @@ test("removed and unknown never 404 and say so", () => {
   }
 });
 
-test("live pages offer the waitlist and the app link", () => {
+test("live pages offer the waitlist; no app link until the app can open it; forms post, never get", () => {
   const h = renderPage({ type: "s", id, s: base, cfg, now });
   assert.ok(h.includes("Get deadline reminders in the app"));
-  assert.ok(h.includes(`dearborough://s/${id}`));
+  assert.ok(!h.includes("dearborough://"));
+  assert.ok(!h.includes("Open in the app"));
+  assert.ok(/<form [^>]*method="post"/.test(h));
+  assert.ok(h.includes('<script src="/assets/forms.js"></script>'));
+  assert.ok(h.includes("<p class=\"kicker\">Update</p>"));
   assert.ok(h.includes('data-from="/s/' + id + '"'));
 });
 
@@ -73,5 +77,37 @@ test("handleStory: backend down gives a friendly page, bad id gives the removed 
     const ok = await handleStory("s", ctx(id));
     assert.equal(ok.status, 200);
     assert.equal(ok.headers.get("Cache-Control"), "public, max-age=300");
+  } finally { globalThis.fetch = real; }
+});
+
+test("a consultation whose closing date is unknown is open with no date line and no 'closed' wording", () => {
+  const h = renderPage({ type: "c", id, s: { ...base, status: "open", closes_at: null }, cfg, now });
+  assert.ok(!h.includes("has closed") && !h.includes("closed on"));
+  assert.ok(!h.includes("Closes "));
+  assert.ok(!h.includes('class="deadline"'));
+  assert.ok(h.includes("Get deadline reminders in the app"));
+});
+
+test("a finished event says so and offers no waitlist", () => {
+  const h = renderPage({ type: "e", id, s: { ...base, status: "closed", starts_at: "2026-11-10T19:30:00Z", venue: "Romford Library" }, cfg, now });
+  assert.ok(h.includes("This event has finished."));
+  assert.ok(!h.includes("Get deadline reminders"));
+  assert.ok(!h.includes("<form"));
+  const live = renderPage({ type: "e", id, s: { ...base, status: "open", starts_at: "2026-11-28T19:30:00Z" }, cfg, now });
+  assert.ok(!live.includes("This event has finished."));
+});
+
+test("story pages show the publisher name given by the backend, and the fetch sends no key", async () => {
+  const env = { SITE_URL: "https://s.test", SUPABASE_URL: "https://x.supabase.co", SUPABASE_ANON_KEY: "anon-secret" };
+  const real = globalThis.fetch;
+  let seen;
+  try {
+    globalThis.fetch = async (u, o) => { seen = o; return Response.json({ ...base, source: "Transport for London", source_url: "https://tfl.gov.uk/x" }); };
+    const res = await handleStory("s", { params: { id }, env, request: new Request("https://s.test/s/" + id) });
+    const text = await res.text();
+    assert.ok(text.includes("From Transport for London"));
+    assert.ok(!JSON.stringify(seen).includes("anon-secret"));
+    assert.equal(seen.headers.apikey, undefined);
+    assert.equal(seen.headers.Authorization, undefined);
   } finally { globalThis.fetch = real; }
 });
