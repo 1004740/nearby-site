@@ -3,57 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy notice: Nearby launch list</title>
+<meta name="theme-color" content="#FCFAF6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10152B" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/config.js"></script>
+<title>Privacy notice | Dear Borough</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231b2a24'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23f4c430' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23f4c430'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;600&display=swap">
-<style>
-:root{--land:#eef2ea;--ink:#1b2a24;--muted:#4f5f57;--rule:#cfd8cb;--road:#f4c430;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--land:#111915;--ink:#e7ede6;--muted:#a6b4ab;--rule:#2c3a33;color-scheme:dark}}
-body{margin:0;background:var(--land);color:var(--ink);font-family:"Hanken Grotesk","Segoe UI",system-ui,sans-serif;font-size:1.0625rem;line-height:1.6}
-main{max-width:680px;margin:0 auto;padding:32px 20px 72px}
-a{color:inherit;text-underline-offset:.18em}
-:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-.back{font-weight:600}
-h1{font-family:"Young Serif",Georgia,serif;font-weight:400;font-size:clamp(2rem,6vw,2.8rem);line-height:1.1;margin:32px 0 8px}
-h2{font-size:1.15rem;margin:36px 0 8px}
-p,li{color:var(--ink)}
-.updated{color:var(--muted);margin:0 0 24px}
-mark{background:var(--road);color:#1b2a24;padding:0 4px;border-radius:3px}
-</style>
 </head>
 <body>
-<main>
-<a class="back" href="./">Back to Nearby</a>
-<h1>Privacy notice for the launch list</h1>
-<p class="updated">Last updated <mark>[date]</mark></p>
-
-<p>This notice explains what happens to the details you give us when you join the Nearby launch list. It covers the launch list only. The Nearby app will have its own privacy notice.</p>
+<a class="skip" href="#main">Skip to the content</a>
+<div class="wrap wide">
+<header class="bar">
+  <a class="brand" href="/" aria-label="Dear Borough, home"><picture><source srcset="/assets/wordmark-cream.svg" media="(prefers-color-scheme: dark)"><img src="/assets/wordmark-ink.svg" alt="Dear Borough" width="170" height="26"></picture></a>
+  <nav aria-label="Main"><a href="/letter">Get the Letter</a></nav>
+</header>
+<main id="main" class="privacy">
+<h1>Privacy notice</h1>
+<p class="muted">Last updated <mark>[date]</mark></p>
+<p>This notice covers this website: the weekly Letter by email, the app waitlist, and the shared story pages. The Dear Borough app will have its own privacy notice.</p>
 
 <h2>Who we are</h2>
-<p>Nearby is run by <mark>[your name or company name, and address]</mark>. We are the controller of your personal data. Contact us at <mark>[email address]</mark> with any question about your data.</p>
+<p>Dear Borough is run by <mark>[your name or company name, and address]</mark>. We are the controller of your personal data. Contact us at <mark>[email address]</mark> with any question about your data.</p>
 
-<h2>What we collect</h2>
+<h2>The weekly Letter by email</h2>
+<p>What we collect:</p>
 <ul>
 <li>Your email address.</li>
-<li>The first half of your postcode (for example M1), if you give it. We never store the full postcode.</li>
-<li>That you agreed to be emailed, and when you signed up.</li>
+<li>A record of your consent: that you ticked the box, the wording version (for example letter-2026-11), the time, and the page you signed up on.</li>
+<li>Whether you have confirmed your address or unsubscribed, and when.</li>
+<li>To stop abuse of the sign-up form, a scrambled (hashed) form of your email address and of your IP address, made with a secret key. We can't turn it back into the original, but it is still personal data. We delete it within 24 hours of the sign-up request, and at the latest after 7 days.</li>
 </ul>
+<p>We use it to send you the Letter once a week and one email to confirm your address. Our lawful basis is your consent. You confirm by clicking the link in the first email, and nothing more is sent until you do. Every Letter has an unsubscribe link. Unsubscribing takes effect straight away.</p>
 
-<h2>Why we use it, and our lawful basis</h2>
-<p>We use your email address to tell you when Nearby launches in your area. We use the first half of your postcode to count sign-ups by area and decide where to launch first. Our lawful basis is your consent, which you give by ticking the box on the sign-up form.</p>
+<h2>The app waitlist</h2>
+<ul>
+<li>Your email address.</li>
+<li>The first half of your postcode (for example RM1), if you give it. We never store the full postcode.</li>
+<li>That you agreed to be emailed, and when.</li>
+</ul>
+<p>We use your email address to tell you when Dear Borough opens to you, and the first half of your postcode to count sign-ups by area. Our lawful basis is your consent, given by ticking the box on the form.</p>
 
-<h2>Who can see it</h2>
-<p>Only the Nearby team. The list is stored with our database provider, Supabase, which processes it on our behalf. <mark>[Say where your Supabase project is hosted, for example the EU (London) region, and if data leaves the UK, the safeguard used.]</mark> We don't sell your details or share them with advertisers.</p>
+<h2>Who processes it for us</h2>
+<ul>
+<li><strong>Supabase</strong> stores the Letter list and the waitlist. <mark>[Confirm the Supabase project region. The plan is London; if it is not, say where and what safeguard covers transfers outside the UK.]</mark></li>
+<li><strong>Resend</strong> sends the confirmation email and the Letter, so it receives your email address. Resend is based in the United States. <mark>[Name the safeguard for that transfer, for example the UK-US data bridge or the UK addendum to the standard contractual clauses, as for Supabase above.]</mark></li>
+<li><strong>Cloudflare</strong> hosts this website and runs Turnstile, the check on the Letter form that tells people from bots. Cloudflare handles technical information about your visit to do this. See Cloudflare's privacy policy for details.</li>
+</ul>
+<p>We don't sell your details or share them with advertisers.</p>
+
+<h2>Story pages</h2>
+<p>When someone shares a link to a story, consultation or event, the page shows public information from the source named on it. We don't collect personal data from reading these pages.</p>
 
 <h2>How long we keep it</h2>
-<p>We keep your details until Nearby launches in your area and we've emailed you, or until you ask us to remove them, whichever comes first. <mark>[Add a maximum period, for example 2 years.]</mark></p>
+<p>The Letter:</p>
+<ul>
+<li>Your email address and consent record are kept while you are subscribed.</li>
+<li>If you sign up but never confirm, we delete your details 30 days after we send the confirmation email.</li>
+<li>If you unsubscribe, we delete your details, including your address at Resend, 30 days after you unsubscribe. We keep them for that long so that your unsubscribe is respected and we can show when it happened.</li>
+<li>The scrambled abuse-prevention data is deleted as described above.</li>
+</ul>
+<p>We keep waitlist details until Dear Borough opens to you and we've emailed you, or until you ask us to remove them. <mark>[Add a maximum period for the waitlist, for example 2 years.]</mark></p>
 
 <h2>Your rights</h2>
-<p>You can withdraw consent, unsubscribe, or ask to see, correct or delete your details at any time by emailing <mark>[email address]</mark>. Every email we send also has an unsubscribe link. If you're unhappy with how we've handled your data, you can complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/">ico.org.uk</a>.</p>
+<p>You can withdraw consent, unsubscribe, or ask to see, correct or delete your details at any time by emailing <mark>[email address]</mark>. If you're unhappy with how we've handled your data, you can complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/">ico.org.uk</a>.</p>
 
-<h2>Cookies</h2>
-<p>This website doesn't set cookies or use analytics. It loads fonts from Google Fonts, which means your browser connects to Google's servers.</p>
+<h2>Cookies and fonts</h2>
+<p>Our pages set no cookies and use no analytics. They use fonts already on your device, so nothing is loaded from a font service. The Turnstile check on the Letter form is run by Cloudflare.</p>
 </main>
+<footer>
+  <a href="/privacy">Privacy notice</a><a href="/letter">Get the Letter</a><a href="/">Home</a>
+  <p>Dear Borough summarises public information and links to the original. It is not run by Havering Council.</p>
+</footer>
+</div>
 </body>
 </html>

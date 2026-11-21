@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.uk.co.dearborough.app"],
+        "components": [
+          { "/": "/s/*" },
+          { "/": "/c/*" },
+          { "/": "/e/*" },
+          { "/": "/letter" }
+        ]
+      }
+    ]
+  }
+}
