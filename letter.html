@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FCFAF6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10152B" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/config.js"></script>
+<title>Get the weekly Letter by email | Dear Borough</title>
+<meta name="description" content="Every Monday: what's changing in Havering, open consultations with their closing dates, and what's on.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Get the weekly Letter by email | Dear Borough">
+<meta property="og:image" content="https://dearborough.london/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<div class="wrap wide">
+<header class="bar">
+  <a class="brand" href="/" aria-label="Dear Borough, home"><picture><source srcset="/assets/wordmark-cream.svg" media="(prefers-color-scheme: dark)"><img src="/assets/wordmark-ink.svg" alt="Dear Borough" width="170" height="26"></picture></a>
+  <nav aria-label="Main"><a href="/letter">Get the Letter</a></nav>
+</header>
+<main id="main">
+<h1>Get the weekly Letter by email</h1>
+<p class="lede">Every Monday: what's changing in Havering, open consultations with their closing dates, and what's on.</p>
+<div class="panel">
+  <p class="notice" id="closed" hidden>Sign-ups for the Letter aren't open yet. Check back soon.</p>
+  <form id="letter-form" novalidate>
+    <div class="fieldgroup">
+      <label class="f" for="email">Email address</label>
+      <input class="field" id="email" name="email" type="email" autocomplete="email" inputmode="email" aria-describedby="email-err">
+      <p class="err" id="email-err"></p>
+    </div>
+    <div class="fieldgroup">
+      <label class="check" for="consent">
+        <input type="checkbox" id="consent" name="consent" aria-describedby="consent-err">
+        <span>Email me the weekly Letter. I can unsubscribe at any time. See the <a href="/privacy">privacy notice</a>.</span>
+      </label>
+      <p class="err" id="consent-err"></p>
+    </div>
+    <div class="fieldgroup">
+      <div id="turnstile"></div>
+      <p class="err" id="turnstile-err"></p>
+    </div>
+    <button class="btn" type="submit" id="letter-btn">Send me the Letter</button>
+    <p class="status" id="letter-status" role="status" aria-live="polite"></p>
+  </form>
+  <div id="letter-done" hidden tabindex="-1" class="done" role="status">
+    <h2>Check your email</h2>
+    <p>We've sent a link to confirm.</p>
+    <p class="muted">Not there after a few minutes? Look in your junk folder.</p>
+  </div>
+  <noscript><p class="notice">This form needs JavaScript to run. Turn it on, or try another browser.</p></noscript>
+</div>
+<p class="muted">The Letter is free. We send it once a week, and every Letter has an unsubscribe link.</p>
+</main>
+<footer>
+  <a href="/privacy">Privacy notice</a><a href="/letter">Get the Letter</a><a href="/">Home</a>
+  <p>Dear Borough summarises public information and links to the original. It is not run by Havering Council.</p>
+</footer>
+</div>
+<script src="/assets/forms.js"></script>
+<script src="/assets/letter.js"></script>
+</body>
+</html>
