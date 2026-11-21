@@ -54,3 +54,42 @@ test("confirm.js posts JSON with Content-Type only and routes to the result page
   assert.match(js, /\/letter\/expired/);
   assert.ok(JSON.parse(read("_routes.json")).include.includes("/letter/confirm"));
 });
+
+// Run assets/confirm.js against a minimal fake DOM and a controllable fetch.
+async function runButton(fetchImpl) {
+  const { runInNewContext } = await import("node:vm");
+  let handler, submitted = 0, assigned = null;
+  const el = () => ({ textContent: "", disabled: false });
+  const btn = el(), statusEl = el();
+  const form = {
+    elements: { t: { value: TOKEN } },
+    getAttribute: () => "https://x.supabase.co/functions/v1/letter-confirm",
+    addEventListener: (_n, h) => { handler = h; },
+    submit: () => { submitted++; },
+  };
+  const ids = { "confirm-form": form, "confirm-btn": btn, "confirm-status": statusEl };
+  runInNewContext(read("assets/confirm.js"), {
+    document: { getElementById: (i) => ids[i] },
+    fetch: fetchImpl, location: { assign: (u) => { assigned = u; } }, JSON,
+  });
+  handler({ preventDefault() {} });
+  await new Promise((r) => setTimeout(r, 10));
+  return { submitted, assigned };
+}
+
+test("confirm button: a network/CORS failure falls back to the plain form post", async () => {
+  const r = await runButton(() => Promise.reject(new TypeError("Failed to fetch")));
+  assert.equal(r.submitted, 1);
+  assert.equal(r.assigned, null);
+});
+
+test("confirm button: a non-2xx reply falls back to the plain form post", async () => {
+  const r = await runButton(() => Promise.resolve({ ok: false, status: 500, json: async () => ({}) }));
+  assert.equal(r.submitted, 1);
+});
+
+test("confirm button: success goes to the result page without a form post", async () => {
+  const r = await runButton(() => Promise.resolve({ ok: true, json: async () => ({ status: "confirmed" }) }));
+  assert.equal(r.submitted, 0);
+  assert.equal(r.assigned, "/letter/confirmed");
+});
