@@ -6,7 +6,6 @@
   if (!form) return;
   var btn = document.getElementById("confirm-btn");
   var statusEl = document.getElementById("confirm-status");
-  function reset(text) { statusEl.textContent = text; btn.disabled = false; btn.textContent = "Confirm my email"; }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -14,18 +13,18 @@
     btn.disabled = true;
     btn.textContent = "Confirming…";
     statusEl.textContent = "";
+    // Any failure (network, CORS, non-2xx, unreadable reply) falls back to the plain form post, which needs no CORS and
+    // ends in the function's redirect. form.submit() does not fire "submit" again, so this cannot loop.
+    function fallback() { statusEl.textContent = "Confirming…"; form.submit(); }
     fetch(form.getAttribute("action"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ t: form.elements.t.value })
     }).then(function (res) {
-      if (!res.ok) { reset("Something went wrong on our side. Try again in a minute."); return null; }
+      if (!res.ok) throw new Error("status " + res.status);
       return res.json();
     }).then(function (data) {
-      if (!data) return;
-      location.assign(data.status === "confirmed" ? "/letter/confirmed" : "/letter/expired");
-    }).catch(function () {
-      reset("We couldn't reach the server. Check your connection and try again.");
-    });
+      location.assign(data && data.status === "confirmed" ? "/letter/confirmed" : "/letter/expired");
+    }).catch(fallback);
   });
 })();
