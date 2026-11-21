@@ -8,6 +8,7 @@ The public website for Dear Borough: the landing page, the weekly Letter sign-up
 | --- | --- |
 | `index.html` | Landing page and app waitlist form |
 | `letter.html` | Letter sign-up (email, unticked consent box, Turnstile check) |
+| `functions/letter/confirm.js`, `functions/_lib/confirm.js`, `assets/confirm.js` | `/letter/confirm?t=`: the page the confirmation email links to. Opening it changes nothing; its button POSTs to `letter-confirm` (form fallback without JS) |
 | `letter/confirmed.html`, `expired.html`, `unsubscribed.html` | Where the email links land |
 | `list.html` | "You're on the list" after a waitlist sign-up |
 | `privacy.html` | Privacy notice (owner placeholders are highlighted) |
@@ -15,7 +16,7 @@ The public website for Dear Borough: the landing page, the weekly Letter sign-up
 | `functions/_lib/` | Helpers the functions use (escaping, London dates). Tested in `test/` |
 | `assets/` | Brand files (D seal, wordmark, icons), `og-image.png`, CSS and the form scripts |
 | `config.js` | Settings: `SITE_URL`, `supabaseUrl`, `supabaseAnonKey`, `turnstileSiteKey` |
-| `_headers`, `_routes.json` | Security headers for static files; limits Functions to the story paths |
+| `_headers`, `_routes.json` | Security headers for static files; limits Functions to the story paths and `/letter/confirm` |
 | `functions/_middleware.js`, `functions/_lib/headers.js` | The same security headers on Function responses (`_headers` does not cover them). A test fails if the two lists differ |
 | `.well-known/apple-app-site-association` | Placeholder for universal links |
 
