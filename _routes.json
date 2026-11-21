@@ -1,1 +1,1 @@
-{ "version": 1, "include": ["/s/*", "/c/*", "/e/*"], "exclude": [] }
+{ "version": 1, "include": ["/s/*", "/c/*", "/e/*", "/letter/confirm"], "exclude": [] }
