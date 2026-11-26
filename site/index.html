@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dear Borough: local updates for London, starting in Havering</title>
+<meta name="description" content="Bin days, train lines, local events and Have your say. Starting in Havering, then London borough by borough. Coming soon to iPhone.">
+<meta name="theme-color" content="#FCFAF6">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dearborough.london/">
+<meta property="og:site_name" content="Dear Borough">
+<meta property="og:title" content="Dear Borough: local updates for London, starting in Havering">
+<meta property="og:description" content="See what is happening near you. Bin days, train lines, local events and Have your say, starting in Havering. Coming soon to iPhone.">
+<meta property="og:image" content="https://dearborough.london/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Dear Borough. A terrace of houses at dusk with the windows lit.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/inter-ExtraBold.woff" as="font" type="font/woff" crossorigin>
+<style>@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/inter-Regular.woff) format("woff")}@font-face{font-family:Inter;font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/inter-SemiBold.woff) format("woff")}@font-face{font-family:Inter;font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/inter-Bold.woff) format("woff")}@font-face{font-family:Inter;font-style:normal;font-weight:800;font-display:swap;src:url(assets/fonts/inter-ExtraBold.woff) format("woff")}</style>
+<link rel="preload" as="image" href="assets/terrace.png">
+<style>
+:root{
+  --ink:#151A3A; --cream:#FCFAF6; --night:#0E1226; --dusk:#3A2D55; --slate:#4A5068;
+  --teal:#0A7468; --teal-pressed:#075A50; --marigold:#FFBE5C; --mist:#D3D2DF;
+  --hairline:#E6E2DA; --rule:#CFCBC2; --white:#fff;
+  --london:#B8202B;    /* the red of LONDON in the logo. Decoration only, always faint or small: never text, buttons, errors or deadlines */
+  --out:cubic-bezier(.2,0,0,1); --in-out:cubic-bezier(.4,0,.2,1);
+  --quick:180ms; --standard:260ms; --gentle:400ms;
+  --rise:12px;         /* the one arrival distance: phone, samples, confirmation */
+  --gut:1.5rem;        /* page gutter */
+  --shell:min(80rem,100% - 2*var(--gut));
+  --th:170px;          /* terrace height */
+  --pw:360px;          /* phone width */
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:linear-gradient(to top,rgba(184,32,43,.05),rgba(184,32,43,0) 34rem) var(--cream);color:var(--ink);font:400 1.0625rem/1.47 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss03"}
+h1,h2,h3,p,ul{margin:0;padding:0;overflow-wrap:break-word}
+ul{list-style:none}
+img{display:block;max-width:100%}
+a{color:inherit}
+.shell{width:var(--shell);margin-inline:auto}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* focus: ink ring on cream, cream ring on the night panel */
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:4px}
+.night :focus-visible{outline-color:var(--cream)}
+.skip{position:absolute;left:1rem;top:1rem;z-index:10;padding:.75rem 1rem;border-radius:14px;background:var(--ink);color:var(--white);font-weight:700;text-decoration:none;transform:translateY(-300%)}
+.skip:focus{transform:none;outline-offset:3px}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-block:1.25rem 1.125rem}
+/* The logo: the app's terrace lockup (mark, Dear Borough, red LONDON), cut on the app's 1342.88 x 512 grid (landingLogo.ts).
+   Big on purpose. The plain mark, as on the app icon: white terrace on teal, no lit windows. It does not animate. */
+.lockup{position:relative;flex:none;display:block;height:6rem;aspect-ratio:792/302}
+.lockup img{width:100%;height:100%}
+.masthead p{font-size:.9375rem;line-height:1.4;font-weight:600;color:var(--slate);text-align:right}
+
+/* ---------- actions ---------- */
+.button{display:inline-flex;align-items:center;justify-content:center;min-height:3.5rem;padding:.875rem 1.75rem;border-radius:14px;background:var(--teal);color:var(--white);font-size:1.0625rem;line-height:1.3;font-weight:700;text-decoration:none;text-align:center;transition:transform 100ms var(--out),opacity 100ms var(--out)}
+.button:active{transform:scale(.98);background:var(--teal-pressed)}
+.button[aria-busy="true"]{opacity:.6}
+.night .button{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42)}
+.link{font-weight:700;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.25em}
+.link:active{opacity:.85}
+@media (hover:hover){
+  .button:hover{background:var(--teal-pressed)}
+  .night .link:hover{color:var(--white);text-decoration-thickness:2.5px}
+}
+
+/* ---------- hero: the one night panel ---------- */
+.night{position:relative;isolation:isolate;overflow:hidden;border-radius:28px;color:var(--cream);
+  /* The last red of the evening, low behind the roofs on one side: the logo's LONDON red at 24% at its strongest. */
+  background:radial-gradient(ellipse 62% calc(var(--th)*2.1) at 26% 100%,rgba(184,32,43,.24),rgba(184,32,43,0) 72%),linear-gradient(to top,var(--dusk) calc(var(--th)*.6),var(--night) calc(var(--th)*2.6)) var(--night);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:clamp(2rem,5vw,5rem);
+  padding:clamp(2.5rem,4vw,3.5rem) clamp(2.5rem,5.6vw,5.5rem) 0}
+.pitch{align-self:start;padding-bottom:calc(var(--th) + 2.25rem)}
+.eyebrow{font-size:1rem;line-height:1.4;font-weight:600;color:var(--mist)}
+h1{margin-top:1rem;font-weight:800;font-size:min(5.25rem,5.9vw);line-height:.95;letter-spacing:-.055em;word-spacing:.08em;margin-left:-.04em}
+h1 span{display:block;white-space:nowrap}
+.lede{margin-top:1.5rem;max-width:23em;text-wrap:balance;font-size:1.3125rem;line-height:1.4;color:var(--cream)}
+.reason{margin-top:.875rem;max-width:35em;text-wrap:pretty;color:var(--mist)}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:.875rem 1.5rem;margin-top:1.75rem}
+.small{flex:1 1 14em;max-width:17em;font-size:.9375rem;line-height:1.4;font-weight:600;color:var(--mist)}
+
+/* the street */
+.street{position:absolute;inset:auto 0 0;height:var(--th);z-index:-1;pointer-events:none}
+.street i{position:absolute;inset:0;background-repeat:repeat-x;background-size:auto 100%;background-position:0 0}
+.street .houses{background-image:url(assets/terrace.png)}
+.w1{background-image:url(assets/win-1.png)}.w2{background-image:url(assets/win-2.png)}.w3{background-image:url(assets/win-3.png)}
+.w4{background-image:url(assets/win-4.png)}.w5{background-image:url(assets/win-5.png)}.w6{background-image:url(assets/win-6.png)}
+/* Motion v2 (briefs/motion-v2.md). One arrival gesture for everything that arrives: rise var(--rise) and fade in on --out.
+   html.m is set in the head only when motion is allowed, so every waiting state below is skipped under Reduce Motion and without JS. */
+@keyframes lit{from{opacity:0}}
+@keyframes arrive{from{opacity:0;transform:translate3d(0,var(--rise),0)}}
+/* Hero, beat 2: the windows come on, people coming home, in the order 3, 1, 5, 2, 6, 4. Resting state is lit. */
+.street .w{animation:lit var(--gentle) var(--in-out) backwards}
+.street .w3{animation-delay:60ms}.street .w1{animation-delay:150ms}.street .w5{animation-delay:240ms}
+.street .w2{animation-delay:330ms}.street .w6{animation-delay:420ms}.street .w4{animation-delay:510ms}
+/* JS holds the windows unlit until the art has loaded and the street is on screen. Without JS they simply play on load. */
+html.m .street:not(.go) .w{animation:none;opacity:0}
+
+/* ---------- the phone: built from the app's tokens (theme.ts, HubParts.tsx) ---------- */
+.device{position:relative;align-self:end;width:var(--pw);margin-bottom:-1px;--u:calc(var(--pw)/390)}
+/* Hero, beat 3: the sample screen arrives after the windows (the script sets the delay from the same clock). */
+html.m .device{opacity:0;transform:translate3d(0,var(--rise),0)}
+html.m .device.in{opacity:1;transform:none;transition:opacity var(--gentle) var(--out),transform var(--gentle) var(--out)}
+html.m .device.now{opacity:1;transform:none;transition:none}
+.sample{position:absolute;z-index:2;top:-.875rem;right:-1.25rem;padding:.4rem .8rem;border-radius:99px;background:var(--cream);color:var(--ink);font-size:.8125rem;line-height:1.3;font-weight:700;box-shadow:0 0 0 1.5px var(--ink),0 6px 16px rgba(14,18,38,.35)}
+.phone{max-height:calc(684*var(--u));overflow:hidden;border:calc(10*var(--u)) solid var(--ink);border-bottom:0;border-radius:calc(52*var(--u)) calc(52*var(--u)) 0 0;background:var(--cream);color:var(--ink);box-shadow:0 0 0 1px rgba(255,255,255,.16),0 30px 60px rgba(14,18,38,.5);font-size:calc(17*var(--u));line-height:calc(25*var(--u))}
+.band{position:relative;height:calc(176*var(--u));background:linear-gradient(#3A3468 0,#54457E 30%,#B27D8E 52%,#F1A883 70%)}
+.band::before{content:"";position:absolute;inset:auto 0 0;height:calc(88*var(--u));background:url(assets/hub-strip.png) center bottom/100% 100% no-repeat}
+.band::after{content:"";position:absolute;inset:auto 0 0;height:calc(28*var(--u));background:linear-gradient(rgba(252,250,246,0),var(--cream))}
+.band-row{position:absolute;inset:calc(30*var(--u)) calc(18*var(--u)) auto;display:flex;align-items:center;justify-content:space-between}
+.band-row img{width:calc(40*var(--u));height:calc(40*var(--u));border-radius:calc(9*var(--u))}
+.plate{padding:calc(2*var(--u));border:calc(2*var(--u)) solid var(--ink);border-radius:calc(9*var(--u));background:var(--white)}
+.plate b{display:block;padding:calc(3*var(--u)) calc(9*var(--u));border:calc(1*var(--u)) solid var(--ink);border-radius:calc(5*var(--u));font-size:calc(15*var(--u));line-height:calc(21*var(--u));font-weight:800;letter-spacing:.04em}
+.screen{padding:0 calc(18*var(--u)) calc(26*var(--u))}
+.t-display{padding:calc(8*var(--u)) 0 calc(10*var(--u));font-size:calc(32*var(--u));line-height:calc(38*var(--u));font-weight:800;letter-spacing:-.025em}
+.t-first{color:#5A6072}
+.t-title{margin:calc(20*var(--u)) 0 calc(10*var(--u));font-size:calc(24*var(--u));line-height:calc(30*var(--u));font-weight:800;letter-spacing:-.017em}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:calc(10*var(--u))}
+.tile{display:flex;flex-direction:column;gap:calc(6*var(--u));padding:calc(14*var(--u));border:calc(1.5*var(--u)) solid var(--hairline);border-radius:calc(14*var(--u));background:var(--white)}
+.tile-head{display:flex;align-items:flex-start;gap:calc(6*var(--u));font-size:calc(15*var(--u));line-height:calc(21*var(--u));font-weight:700;color:#5A6072}
+.tile-head svg{flex:none;width:calc(18*var(--u));height:calc(18*var(--u));margin-top:calc(1.5*var(--u));color:var(--teal)}
+.tile-head svg.chev{display:none}
+.tile-big{font-size:calc(24*var(--u));line-height:calc(30*var(--u));font-weight:800;letter-spacing:-.017em;font-variant-numeric:tabular-nums}
+.tile-foot{margin-top:auto;font-size:calc(15*var(--u));line-height:calc(21*var(--u));font-weight:600;color:#5A6072}
+.t-day{margin-top:calc(26*var(--u));padding-bottom:calc(8*var(--u));font-size:calc(19*var(--u));line-height:calc(25*var(--u));font-weight:800;letter-spacing:-.01em;border-bottom:calc(4*var(--u)) double var(--ink)}
+.t-card{height:calc(60*var(--u));margin-top:calc(12*var(--u));border:calc(1.5*var(--u)) solid var(--hairline);border-bottom:0;border-radius:calc(14*var(--u)) calc(14*var(--u)) 0 0;background:var(--white)}
+
+/* ---------- inside the app: one row of three samples, all one size and one anatomy. All light: the hero is the one dark panel. ---------- */
+.inside{display:grid;grid-template-columns:8.5rem minmax(0,1fr);column-gap:1.5rem;align-items:start;padding-block:clamp(4rem,7vw,6.5rem) clamp(4rem,7vw,6rem)}
+.note{padding-top:.2rem;font-size:.9375rem;line-height:1.4;font-weight:700;color:var(--slate)}
+/* A short red mark over the margin note, the width of a word in LONDON. */
+.note::before{content:"";display:block;width:1.75rem;height:3px;margin-bottom:.7rem;background:var(--london)}
+.pv-row{--gap:2.75rem;--fade:5rem;--cw:min(19rem,78vw);overflow:hidden;padding:2.5rem 1rem 2.75rem;margin-inline:-1rem;-webkit-mask-image:linear-gradient(90deg,transparent,#000 var(--fade),#000 calc(100% - var(--fade)),transparent);mask-image:linear-gradient(90deg,transparent,#000 var(--fade),#000 calc(100% - var(--fade)),transparent)}
+.pv-track{display:flex;width:max-content;animation:pv-roll 26s var(--in-out) infinite alternate;will-change:transform}
+/* Every sample is the same width (--cw). The set is a two-row grid, card over caption, and each sample takes its rows
+   from the set (subgrid), so every card is as tall as the tallest and every caption starts on the same line. */
+.pv-set{display:grid;grid-auto-flow:column;grid-auto-columns:var(--cw);grid-template-rows:auto auto;column-gap:var(--gap);padding-right:var(--gap)}
+@keyframes pv-roll{to{transform:translateX(-50%)}}
+.pv{display:grid;grid-row:span 2;grid-template-rows:1fr auto;min-width:0;margin:0}
+@supports (grid-template-rows:subgrid){.pv{grid-template-rows:subgrid}}
+@supports not (grid-template-rows:subgrid){.pv figcaption{min-height:2.8em}}
+/* Without the script: the plain CSS glide, paused under the pointer or focus, and a hover lift. */
+.pv-row:not(.pv-js):hover .pv-track,.pv-row:not(.pv-js):focus-within .pv-track{animation-play-state:paused}
+.pv-row:not(.pv-js) .pv{transition:transform var(--quick) var(--out)}
+@media (hover:hover){.pv-row:not(.pv-js) .pv:hover{transform:translateY(-4px)}}
+/* With the script (the glide engine at the end of the page): it drives the track and each card's lift with transforms.
+   The strip can be dragged sideways; up and down still scrolls the page. */
+.pv-js .pv-track{animation:none}
+.pv-js{touch-action:pan-y pinch-zoom;cursor:grab;-webkit-user-select:none;user-select:none}
+.pv-js.drag{cursor:grabbing}
+.pv-js .pv{will-change:transform}
+.pv-js img{pointer-events:none}
+/* The samples arrive one after another the first time the strip is seen; then the glide starts. */
+html.m .pv-row:not(.in) .pv{opacity:0}
+html.m .pv-row.enter .pv{animation:arrive var(--gentle) var(--out) backwards;animation-delay:calc(var(--i,0)*70ms)}
+.pv-sample{position:relative;display:grid}
+.pv-sample>.sample{top:-.875rem;right:-.75rem;box-shadow:0 0 0 1.5px var(--ink)}
+.pv figcaption{margin-top:.875rem;font-size:.9375rem;line-height:1.4;color:var(--slate);text-wrap:pretty}
+.pv figcaption b{font-weight:800;color:var(--ink)}
+/* The one card, used by all three samples: a label row, 2 items, a source line. The two item rows share the height equally,
+   so the rules line up from card to card. Built from the app's tokens (ui.tsx, EventCards.tsx, LetterParts.tsx). */
+.card{display:grid;grid-template-rows:auto 1fr 1fr auto;min-width:0;padding:.95rem 1rem .9rem;border:1.5px solid var(--hairline);border-radius:16px;background:var(--white);box-shadow:0 3px 10px rgba(58,45,85,.1)}
+.card-label{padding-bottom:.6rem;border-bottom:4px double var(--ink);font-size:.9375rem;line-height:1.4;font-weight:800;letter-spacing:-.01em}
+.it{padding-block:.7rem .65rem;border-bottom:1px solid var(--rule)}
+.it-title{font-size:1.0625rem;line-height:1.32;font-weight:700;letter-spacing:-.012em}
+/* The item tag: one line under the title, the same height whether it holds words or a pill. */
+.it-tag{display:flex;align-items:center;min-height:1.875rem;margin-top:.2rem;font-size:.875rem;line-height:1.3;font-weight:700;color:var(--slate)}
+/* What's on: ochre is for event times only. */
+.it-tag.when{color:#7A5900;font-variant-numeric:tabular-nums}
+/* Have your say: the app's outlined deadline pill (a clock and words, never colour alone). */
+.pill{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem .25rem .45rem;border:1.5px solid #A3195B;border-radius:99px;color:#A3195B;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill svg{flex:none;width:1rem;height:1rem}
+.card-src{min-height:2.8em;padding-top:.7rem;box-sizing:content-box;font-size:.875rem;line-height:1.4;color:var(--slate)}
+/* The Letter: the app's letter paper, inside the same card. */
+.card-paper{background:#F3F1EC url(assets/paper-fibre.png)}
+.nb{white-space:nowrap}
+.keep{display:inline-block}
+
+/* ---------- trust: one strip of two facts ---------- */
+.trust ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.5rem;padding-block:1.4rem 1.5rem;border-top:1px solid var(--rule)}
+.trust li{display:flex;gap:.65rem;padding-right:.5rem;font-size:1.0625rem;line-height:1.35;font-weight:700;letter-spacing:-.012em;text-wrap:balance}
+.trust li::before{content:"";flex:none;width:.4375rem;height:.4375rem;margin-top:.47em;border-radius:50%;background:var(--london)}
+.trust li+li{padding-left:1.5rem;border-left:1px solid var(--rule)}
+
+/* ---------- choose your borough: the one action ---------- */
+.where{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:1.5rem;row-gap:1.5rem;align-items:start;padding-block:clamp(2rem,3.2vw,2.75rem) clamp(2.5rem,4vw,3.5rem);border-top:4px double rgba(184,32,43,.55)}
+.where h2{grid-column:1/7;font-size:clamp(2rem,4.6vw,3.75rem);line-height:1;font-weight:800;letter-spacing:-.05em;text-wrap:balance}
+.join{grid-column:7/13;padding-top:.35rem;scroll-margin-top:1.5rem}
+.join-lead{margin-bottom:1.1rem;font-size:1.1875rem;line-height:1.4;color:var(--slate)}
+.join form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem;align-items:start}
+.consent-wrap,#wl-send-err{grid-column:1/-1}
+.field{margin-bottom:1rem}
+.field label{display:block;margin-bottom:.4rem;font-size:.9375rem;line-height:1.4;font-weight:700}
+.field input,.field select{display:block;width:100%;min-height:3.5rem;margin:0;padding:.75rem 1rem;border:1.5px solid var(--slate);border-radius:14px;background-color:var(--white);color:var(--ink);font:inherit;-webkit-appearance:none;appearance:none}
+.field select{padding-right:3rem;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23151A3A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 7.5 10 13l5.5-5.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;background-size:1.25rem}
+/* Errors: no red on this page. A heavier ink border and a marked ink line, so the state never rests on colour. */
+.field [aria-invalid="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.err{margin-top:.45rem;padding-left:1.6rem;font-size:.9375rem;line-height:1.4;font-weight:700;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%23151A3A'/%3E%3Cpath d='M10 5.2v5.6M10 14.2v.1' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") 0 .1em/1.2rem no-repeat}
+.join .button{width:100%;border:0;font-family:inherit;cursor:pointer}
+.consent{display:flex;gap:.75rem;align-items:flex-start;margin:0 0 1rem;font-size:.9375rem;line-height:1.4}
+.consent input{flex:none;width:1.5rem;height:1.5rem;margin:0;accent-color:var(--teal)}
+.consent-wrap .err{margin-top:-.4rem;margin-bottom:1rem}
+#wl-send-err{margin:0 0 1rem}
+.fine{align-self:center;font-size:.9375rem;line-height:1.4;color:var(--slate)}
+/* The confirmation arrives with the same gesture, a little quicker because it answers a tap. The script is unchanged: the animation starts when [hidden] is removed. */
+.done{padding-block:1.25rem;border-block:1px solid var(--rule);font-size:1.5rem;line-height:1.25;font-weight:800;letter-spacing:-.02em;animation:arrive var(--standard) var(--out) backwards}
+.done:focus{outline:none}
+[hidden]{display:none!important}
+
+/* ---------- footer ---------- */
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem 1rem;padding-block:1rem 1.5rem;border-top:1px solid var(--rule);font-size:.9375rem;line-height:1.45;color:var(--slate)}
+.foot img{width:147px;height:56px}
+.foot p{flex:1 1 10rem;font-weight:700;color:var(--ink)}
+.foot .link{display:inline-block;max-width:100%;padding-block:.75rem;color:var(--ink);overflow-wrap:anywhere}
+
+/* ---------- tablet and phone ---------- */
+@media (max-width:63.99rem){
+  :root{--pw:300px}
+  .night{grid-template-columns:minmax(0,1fr)}
+  .pitch{padding-bottom:3rem}
+  h1{font-size:min(6.5rem,12.5vw)}
+  .device{justify-self:center}
+  .inside,.where{grid-template-columns:minmax(0,1fr)}
+  .where h2,.join{grid-column:1/-1}
+  .note{padding:0}
+  /* The samples keep rolling at every width; the row only needs room for the badges. */
+  .pv-row{--gap:1.75rem;--fade:2.5rem;margin-inline:calc(var(--gut)*-1);padding-inline:var(--gut)}
+  .pv-sample>.sample{right:.5rem}
+  .card{padding-top:1.6rem}
+  .join{max-width:34rem;padding-top:0}
+}
+@media (max-width:40rem){
+  :root{--gut:1rem;--pw:min(290px,calc(100vw - 5rem));--th:calc(var(--pw)*.38)}
+  /* The street comes in front of the phone, so the lit windows are never hidden: the screen rises behind the roofs.
+     The screen ends in plain cream under the roofline, so no text sits behind a house. */
+  .street{z-index:1}
+  .phone{max-height:none}
+  .t-day,.t-card,.t-first{display:none}
+  .screen{padding-bottom:calc(var(--th) + 14*var(--u))}
+  .masthead{padding-block:.875rem .75rem}
+  .lockup{height:4rem}
+  .masthead p{max-width:9.5em}
+  .night{border-radius:20px;padding:2rem 1.5rem 0}
+  .lede{margin-top:1.25rem;font-size:1.125rem;text-wrap:pretty}
+  .keep{display:inline}
+  .actions{margin-top:1.5rem}
+  .night .button{width:100%}
+  .small{max-width:none}
+  .pitch{padding-bottom:2.5rem}
+  .sample{right:-.5rem}
+  .inside{padding-block:2rem 1.25rem}
+  .trust ul{grid-template-columns:minmax(0,1fr);padding-block:.5rem}
+  .trust li,.trust li+li{padding:.55rem 0;border-left:0}
+  .trust li+li{border-top:1px solid var(--hairline)}
+  .where{row-gap:1rem;padding-block:1.75rem 2rem}
+  .join{max-width:none}
+  .join form{grid-template-columns:minmax(0,1fr)}
+  .fine{margin-top:.75rem}
+  .foot p{flex-basis:12rem}
+  .foot .link{padding-block:.5rem}
+}
+@media (max-width:22rem){
+  .masthead p{display:none}
+  :root{--pw:min(290px,calc(100vw - 4rem))}
+  .sample{right:0}
+  .night{padding-inline:1rem}
+  h1 span{white-space:normal}
+  h1{overflow-wrap:anywhere}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .button:active{transform:none;opacity:.85}
+  /* No roll: the three samples sit still in a row (a scroll strip below 1024 px), duplicates dropped. */
+  .pv-row{-webkit-mask-image:none;mask-image:none;overflow-x:auto;scrollbar-width:thin}
+  .pv-track{width:auto;will-change:auto}
+  .pv-set[aria-hidden]{display:none}
+  .pv{transform:none!important}
+}
+@media (prefers-reduced-motion:reduce) and (min-width:64.0625rem){
+  .pv-row{overflow:hidden;padding-inline:1rem}
+  .pv-track{width:100%}
+  .pv-set{width:100%;grid-auto-columns:minmax(0,1fr);column-gap:1.75rem;padding-right:0}
+}
+@media print{.street .w{animation:none!important;opacity:1!important}.device,.pv,.done{opacity:1!important;transform:none!important;animation:none!important}}
+</style>
+<script>
+/* Motion is allowed: the page may start with the phone and samples waiting. Not set under Reduce Motion, so final states are there at first paint. */
+if(window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window&&window.requestAnimationFrame)document.documentElement.className='m';
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="i-bin" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5h13M8 5.5V3.75h4V5.5M5 5.5l.8 10.2a1 1 0 0 0 1 .9h6.4a1 1 0 0 0 1-.9L15 5.5M8.4 8.6v5M11.6 8.6v5"/></g>
+    <g id="i-train" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="2.75" width="11" height="11.5" rx="2.5"/><path d="M4.5 9h11M7 17.25l1.2-3M13 17.25l-1.2-3"/><path d="M7.4 11.7h.01M12.6 11.7h.01" stroke-width="2.2"/></g>
+    <g id="i-moon" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.6A6.9 6.9 0 0 1 8.4 3.5a6.9 6.9 0 1 0 8.1 8.1Z"/></g>
+    <g id="i-say" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.75A1.75 1.75 0 0 1 4.75 3h7.5A1.75 1.75 0 0 1 14 4.75v4.5A1.75 1.75 0 0 1 12.25 11H7.5L4.6 13.4V11A1.75 1.75 0 0 1 3 9.25Z"/><path d="M16.2 8.2a1.6 1.6 0 0 1 .8 1.4v3.6a1.6 1.6 0 0 1-1.3 1.6v2.2L13 14.9h-3"/></g>
+    <g id="i-clock" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.600 1.600"/></g>
+    <g id="i-chev" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.5 13 10l-5.5 5.5"/></g>
+  </defs>
+</svg>
+
+<header class="shell masthead">
+  <span class="lockup"><img src="assets/lockup-terrace.png" width="252" height="96" alt="Dear Borough London"></span>
+  <p>Coming soon to iPhone.</p>
+</header>
+
+<main id="main">
+
+  <!-- 1. Hero: the one dark panel on the page. What it is, why it exists, and the one action. -->
+  <section class="shell night" aria-labelledby="headline">
+    <div class="pitch">
+      <p class="eyebrow">For London residents</p>
+      <h1 id="headline"><span>See what is</span> <span>happening</span> <span>near you.</span></h1>
+      <p class="lede">Bin days and train lines. Local events. <span class="keep">A way to have your say on council plans.</span></p>
+      <!-- COPY: the why, once, in one line. -->
+      <p class="reason">Local information is spread across council websites, PDFs and street notices. Dear Borough puts it in one place, with the source on every item.</p>
+      <div class="actions">
+        <a class="button" href="#waitlist">Join the waitlist</a>
+        <p class="small">Starting in Havering. Other London boroughs will be added.</p>
+      </div>
+    </div>
+
+    <div class="device" id="device">
+      <span class="sample" aria-hidden="true">Sample, not live</span>
+      <div class="phone" role="img" aria-label="Sample app screen, not live. Hub. Today in Havering. Bins: Tuesday, recycling. Your lines: Good service, source TfL. Tonight: 3 events, What's on. Have your say deadline: 6 days left, example parking plan.">
+        <div class="band">
+          <div class="band-row">
+            <img src="assets/app-icon.png" width="40" height="40" alt="">
+            <span class="plate"><b>Havering</b></span>
+          </div>
+        </div>
+        <div class="screen">
+          <p class="t-display">Hub</p>
+          <p class="t-first">Bins, train lines, council news and events in Havering</p>
+          <p class="t-title">Today in Havering</p>
+          <div class="tiles">
+            <div class="tile">
+              <p class="tile-head"><svg viewBox="0 0 20 20"><use href="#i-bin"/></svg>Bins<svg class="chev" viewBox="0 0 20 20"><use href="#i-chev"/></svg></p>
+              <p class="tile-big">Tuesday</p>
+              <p class="tile-foot">Recycling</p>
+            </div>
+            <div class="tile">
+              <p class="tile-head"><svg viewBox="0 0 20 20"><use href="#i-train"/></svg>Your lines<svg class="chev" viewBox="0 0 20 20"><use href="#i-chev"/></svg></p>
+              <p class="tile-big">Good service</p>
+              <p class="tile-foot">Source: TfL</p>
+            </div>
+            <div class="tile">
+              <p class="tile-head"><svg viewBox="0 0 20 20"><use href="#i-moon"/></svg>Tonight<svg class="chev" viewBox="0 0 20 20"><use href="#i-chev"/></svg></p>
+              <p class="tile-big">3 events</p>
+              <p class="tile-foot">What's on</p>
+            </div>
+            <div class="tile">
+              <p class="tile-head"><svg viewBox="0 0 20 20"><use href="#i-say"/></svg>Have your say deadline<svg class="chev" viewBox="0 0 20 20"><use href="#i-chev"/></svg></p>
+              <p class="tile-big deadline">6 days left</p>
+              <p class="tile-foot">Example parking plan</p>
+            </div>
+          </div>
+          <p class="t-day">This week</p>
+          <div class="t-card"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="street" aria-hidden="true">
+      <i class="houses"></i>
+      <i class="w w1"></i><i class="w w2"></i><i class="w w3"></i><i class="w w4"></i><i class="w w5"></i><i class="w w6"></i>
+    </div>
+  </section>
+
+  <!-- 2. Inside the app: one row of three samples, all the same size and the same anatomy: the "Sample, not live" badge, a label row, 2 items, one source line.
+       Built from the app's tokens and components (EventCards.tsx, LetterParts.tsx, ui.tsx DeadlinePill). All on light grounds: the hero stays the one dark panel.
+       Each sample is one image for a screen reader; its label says "not live" first.
+       Below 1024 px the row is a strip that scrolls sideways, so it can take keyboard focus. -->
+  <section class="shell inside" aria-labelledby="inside-title">
+    <h2 class="note" id="inside-title">Inside the app</h2>
+    <div class="pv-row" role="group" aria-label="Three sample screens" tabindex="0">
+      <div class="pv-track">
+      <div class="pv-set">
+
+      <figure class="pv pv-on">
+        <div class="pv-sample" role="img" aria-label="Sample, not live. What's on. Example talk, library, from 19:30. Example family swim, Saturday, 10:00. Source: Example organiser. Checked 07:40.">
+          <span class="sample" aria-hidden="true">Sample, not live</span>
+          <div class="card">
+            <p class="card-label">What's on</p>
+            <div class="it"><p class="it-title">Example talk, library</p><p class="it-tag when">From 19:30</p></div>
+            <div class="it"><p class="it-title">Example family swim</p><p class="it-tag when">Sat, 10:00</p></div>
+            <p class="card-src">Source: Example organiser. Checked 07:40.</p>
+          </div>
+        </div>
+        <figcaption><b>What's on.</b> Events, markets, talks and classes.</figcaption>
+      </figure>
+
+      <figure class="pv pv-say">
+        <div class="pv-sample" role="img" aria-label="Sample, not live. Have your say. Example parking plan, 6 days left. Example market layout, last day. Source: Havering Council. Checked 07:40.">
+          <span class="sample" aria-hidden="true">Sample, not live</span>
+          <div class="card">
+            <p class="card-label">Have your say</p>
+            <div class="it"><p class="it-title">Example parking plan</p><p class="it-tag"><span class="pill"><svg viewBox="0 0 20 20"><use href="#i-clock"/></svg>6 days left</span></p></div>
+            <div class="it"><p class="it-title">Example market layout</p><p class="it-tag"><span class="pill"><svg viewBox="0 0 20 20"><use href="#i-clock"/></svg>Last day</span></p></div>
+            <p class="card-src">Source: Havering Council. Checked 07:40.</p>
+          </div>
+        </div>
+        <figcaption><b>Have your say.</b> Council plans, with days left.</figcaption>
+      </figure>
+
+      <figure class="pv pv-letter">
+        <div class="pv-sample" role="img" aria-label="Sample, not live. Your weekly Letter. Example library hours, council news. Example parking plan, Have your say. Source: Havering Council. Checked 07:40.">
+          <span class="sample" aria-hidden="true">Sample, not live</span>
+          <div class="card card-paper">
+            <p class="card-label">Your weekly Letter</p>
+            <div class="it"><p class="it-title">Example library hours</p><p class="it-tag">Council news</p></div>
+            <div class="it"><p class="it-title">Example parking plan</p><p class="it-tag">Have your say</p></div>
+            <p class="card-src">Source: Havering Council. Checked 07:40.</p>
+          </div>
+        </div>
+        <figcaption><b>Your weekly Letter.</b> Council updates, each week.</figcaption>
+      </figure>
+
+      </div>
+      <div class="pv-set" aria-hidden="true" inert>
+
+      <figure class="pv pv-on">
+        <div class="pv-sample">
+          <span class="sample" aria-hidden="true">Sample, not live</span>
+          <div class="card">
+            <p class="card-label">What's on</p>
+            <div class="it"><p class="it-title">Example talk, library</p><p class="it-tag when">From 19:30</p></div>
+            <div class="it"><p class="it-title">Example family swim</p><p class="it-tag when">Sat, 10:00</p></div>
+            <p class="card-src">Source: Example organiser. Checked 07:40.</p>
+          </div>
+        </div>
+        <figcaption><b>What's on.</b> Events, markets, talks and classes.</figcaption>
+      </figure>
+
+      <figure class="pv pv-say">
+        <div class="pv-sample">
+          <span class="sample" aria-hidden="true">Sample, not live</span>
+          <div class="card">
+            <p class="card-label">Have your say</p>
+            <div class="it"><p class="it-title">Example parking plan</p><p class="it-tag"><span class="pill"><svg viewBox="0 0 20 20"><use href="#i-clock"/></svg>6 days left</span></p></div>
+            <div class="it"><p class="it-title">Example market layout</p><p class="it-tag"><span class="pill"><svg viewBox="0 0 20 20"><use href="#i-clock"/></svg>Last day</span></p></div>
+            <p class="card-src">Source: Havering Council. Checked 07:40.</p>
+          </div>
+        </div>
+        <figcaption><b>Have your say.</b> Council plans, with days left.</figcaption>
+      </figure>
+
+      <figure class="pv pv-letter">
+        <div class="pv-sample">
+          <span class="sample" aria-hidden="true">Sample, not live</span>
+          <div class="card card-paper">
+            <p class="card-label">Your weekly Letter</p>
+            <div class="it"><p class="it-title">Example library hours</p><p class="it-tag">Council news</p></div>
+            <div class="it"><p class="it-title">Example parking plan</p><p class="it-tag">Have your say</p></div>
+            <p class="card-src">Source: Havering Council. Checked 07:40.</p>
+          </div>
+        </div>
+        <figcaption><b>Your weekly Letter.</b> Council updates, each week.</figcaption>
+      </figure>
+
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Trust: one strip, two facts. -->
+  <section class="shell trust" aria-labelledby="trust-title">
+    <h2 class="vh" id="trust-title">Where it comes from</h2>
+    <ul>
+      <li>Official sources and named organisers</li>
+      <li>A link to the original on every item</li>
+    </ul>
+  </section>
+
+  <!-- 4. Choose your borough: the one action -->
+  <section class="shell where on-cream" aria-labelledby="where-title">
+    <h2 id="where-title">Choose your borough</h2>
+    <div class="join" id="waitlist">
+      <p class="join-lead">Dear Borough sends one email when your borough is added.</p>
+      
+      <form id="waitlist-form" method="post" novalidate>
+        <div class="field">
+          <label for="wl-email">Email address</label>
+          <input id="wl-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required aria-describedby="wl-email-err">
+          <p class="err" id="wl-email-err" hidden></p>
+        </div>
+        <div class="field">
+          <label for="wl-borough">London borough</label>
+          <select id="wl-borough" name="borough" required aria-describedby="wl-borough-err">
+            <option value="" selected disabled>Choose a borough</option>
+            <option value="Barking and Dagenham">Barking and Dagenham</option>
+            <option value="Barnet">Barnet</option>
+            <option value="Bexley">Bexley</option>
+            <option value="Brent">Brent</option>
+            <option value="Bromley">Bromley</option>
+            <option value="Camden">Camden</option>
+            <option value="City of London">City of London</option>
+            <option value="Croydon">Croydon</option>
+            <option value="Ealing">Ealing</option>
+            <option value="Enfield">Enfield</option>
+            <option value="Greenwich">Greenwich</option>
+            <option value="Hackney">Hackney</option>
+            <option value="Hammersmith and Fulham">Hammersmith and Fulham</option>
+            <option value="Haringey">Haringey</option>
+            <option value="Harrow">Harrow</option>
+            <option value="Havering">Havering (launching first)</option>
+            <option value="Hillingdon">Hillingdon</option>
+            <option value="Hounslow">Hounslow</option>
+            <option value="Islington">Islington</option>
+            <option value="Kensington and Chelsea">Kensington and Chelsea</option>
+            <option value="Kingston upon Thames">Kingston upon Thames</option>
+            <option value="Lambeth">Lambeth</option>
+            <option value="Lewisham">Lewisham</option>
+            <option value="Merton">Merton</option>
+            <option value="Newham">Newham</option>
+            <option value="Redbridge">Redbridge</option>
+            <option value="Richmond upon Thames">Richmond upon Thames</option>
+            <option value="Southwark">Southwark</option>
+            <option value="Sutton">Sutton</option>
+            <option value="Tower Hamlets">Tower Hamlets</option>
+            <option value="Waltham Forest">Waltham Forest</option>
+            <option value="Wandsworth">Wandsworth</option>
+            <option value="Westminster">Westminster</option>
+          </select>
+          <p class="err" id="wl-borough-err" hidden></p>
+        </div>
+        <div class="consent-wrap">
+          <label class="consent" for="wl-consent"><input id="wl-consent" name="consent" type="checkbox" required aria-describedby="wl-consent-err"><span>Email me when Dear Borough reaches my borough.</span></label>
+          <p class="err" id="wl-consent-err" hidden></p>
+        </div>
+        <p class="err" id="wl-send-err" role="alert" hidden></p>
+        <button class="button" type="submit">Join the waitlist</button>
+        <!-- COPY: one line of privacy small print. The line above the form says what the email is for; this adds only the limit. -->
+        
+        <p class="fine">Your email address is not used for anything else. <a href="/privacy" aria-label="Privacy notice">Privacy</a></p>
+      </form>
+      <!-- COPY: confirmation. The borough name is filled in by the script. -->
+      <p class="done" id="waitlist-done" role="status" tabindex="-1" hidden>You are on the <span id="waitlist-borough"></span> waitlist.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="shell foot">
+  <img src="assets/lockup-terrace.png" width="147" height="56" alt="">
+  <p>Thank you for reading. Questions and corrections are welcome.</p>
+  <a class="link" href="mailto:hello@dearborough.london">Contact: hello@dearborough.london</a>
+</footer>
+
+<script>
+/* Waitlist form: inserts into the Supabase waitlist table (insert-only for the public; nobody can read the list back from here). */
+(function(){
+  var f=document.getElementById('waitlist-form');if(!f)return;
+  var URL_='https://yfviwulzmoqqlzwhphfy.supabase.co/rest/v1/waitlist';
+  var KEY='sb_publishable_DfRyFYi3vjfJAYqAAtfSKA_XiKmfYNq'; /* public key: insert-only via row level security */
+  var email=document.getElementById('wl-email'),borough=document.getElementById('wl-borough'),consent=document.getElementById('wl-consent');
+  var sendErr=document.getElementById('wl-send-err'),btn=f.querySelector('button[type=submit]');
+  var MSG={emailEmpty:'Please enter an email address.',emailInvalid:'Please enter an email address in the form name@example.com.',borough:'Please choose a London borough.',
+    consent:'Please tick the box to agree to the email.',failed:'Sorry, that did not send. Please check your connection and try again.'};
+  function mark(el,msg){
+    var e=document.getElementById(el.id+'-err');
+    if(msg){el.setAttribute('aria-invalid','true');e.textContent=msg;e.hidden=false}
+    else{el.removeAttribute('aria-invalid');e.textContent='';e.hidden=true}
+    return !msg;
+  }
+  function checkEmail(){var v=email.value.trim();return mark(email,!v?MSG.emailEmpty:/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)&&v.length<=254?'':MSG.emailInvalid)}
+  function checkBorough(){return mark(borough,borough.value?'':MSG.borough)}
+  function checkConsent(){return mark(consent,consent.checked?'':MSG.consent)}
+  email.addEventListener('input',function(){if(email.hasAttribute('aria-invalid'))checkEmail()});
+  borough.addEventListener('change',checkBorough);
+  consent.addEventListener('change',checkConsent);
+  var busy=false;
+  f.addEventListener('submit',function(ev){
+    ev.preventDefault();if(busy)return;
+    var a=checkEmail(),b=checkBorough(),c=checkConsent();
+    if(!a){email.focus();return}
+    if(!b){borough.focus();return}
+    if(!c){consent.focus();return}
+    busy=true;btn.setAttribute('aria-busy','true');btn.disabled=true;sendErr.hidden=true;
+    fetch(URL_,{method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({email:email.value.trim(),borough:borough.value,consent:true,source:'website'})})
+    .then(function(r){
+      /* 201 = added; 409 = already on the list (same email): treat both as done */
+      if(r.status===201||r.status===409){
+        document.getElementById('waitlist-borough').textContent=borough.value;
+        var done=document.getElementById('waitlist-done');f.hidden=true;done.hidden=false;done.focus();
+      }else{throw new Error('status '+r.status)}
+    })
+    .catch(function(){sendErr.textContent=MSG.failed;sendErr.hidden=false})
+    .then(function(){busy=false;btn.removeAttribute('aria-busy');btn.disabled=false});
+  });
+})();
+</script>
+<script>
+/* Motion v2: one story down the page (briefs/motion-v2.md). Transform and opacity only.
+   1. Hero: the copy is there at first paint; the windows come on; the sample screen arrives.
+   2. Inside the app: the samples arrive one after another, then the strip glides left and right.
+   3. The form confirmation arrives (CSS only).
+   None of this runs under Reduce Motion: html.m is not set, and the page is in its final state. */
+(function(){
+  var root=document.documentElement,mq=matchMedia('(prefers-reduced-motion: reduce)');
+  if(!root.classList.contains('m'))return;
+  var now=function(){return performance.now()};
+
+  /* ---------- 1. Hero ---------- */
+  var st=document.querySelector('.street'),dev=document.getElementById('device');
+  var PHONE_AFTER=520;                 /* the screen starts as the last window comes on */
+  var artReady=!st,stSeen=!st,litAt=0,devWaiting=false;
+  function light(){
+    if(litAt||!artReady||!stSeen)return;
+    litAt=now();if(st)st.classList.add('go');
+    if(devWaiting)rise();
+  }
+  function rise(){
+    devWaiting=false;if(!dev)return;
+    dev.style.transitionDelay=Math.round(litAt?Math.min(PHONE_AFTER,Math.max(0,litAt+PHONE_AFTER-now())):0)+'ms';
+    dev.classList.add('in');
+  }
+  if(st){
+    var urls=Array.prototype.slice.call(st.querySelectorAll('i')).map(function(el){
+      var m=/url\(["']?([^"')]+)/.exec(getComputedStyle(el).backgroundImage);return m&&m[1];
+    }).filter(Boolean),left=urls.length;
+    var ready=function(){artReady=true;light()};
+    if(!left)ready();
+    urls.forEach(function(u){var i=new Image();i.onload=i.onerror=function(){if(--left===0)ready()};i.src=u});
+    setTimeout(ready,1000);            /* never wait long for art */
+  }
+  var heroIO=new IntersectionObserver(function(es){
+    var devGo=false;
+    es.forEach(function(e){
+      var past=!e.isIntersecting&&e.boundingClientRect.bottom<0; /* jumped past it (anchor link): final state, no motion */
+      if(e.target===st){
+        if(past||(e.isIntersecting&&e.intersectionRatio>=.5)){stSeen=true;heroIO.unobserve(st)}
+      }else if(past){dev.classList.add('now');heroIO.unobserve(dev)}
+      else if(e.isIntersecting&&(e.intersectionRatio>=.35||e.intersectionRect.height>=innerHeight*.35)){devGo=true;heroIO.unobserve(dev)}
+    });
+    if(devGo){
+      /* On one clock with the windows when both are on screen; on its own when the street is not. */
+      if(litAt||!stSeen)rise();else devWaiting=true;
+    }
+    light();
+  },{threshold:[0,.35,.5]});
+  if(st)heroIO.observe(st);
+  if(dev)heroIO.observe(dev);
+
+  /* ---------- 2. Inside the app: entrance, then the glide ---------- */
+  var row=document.querySelector('.pv-row'),track=row&&row.querySelector('.pv-track');
+  var glide=null;
+  if(track&&track.children.length>1)glide=(function(){
+    var LEG=22000,REST=1200;           /* one way, and the pause at each end (ms) */
+    var HALT=130,GO=380;               /* how quickly the strip eases to a stop and away again (time constants, ms) */
+    var LIFT=6;                        /* px a sample comes forward at the centre or under the pointer */
+    var FRICTION=350,MAXV=2400;        /* a released drag coasts and settles */
+    /* One leg, as a speed profile rather than a curve: pull away over the first 8%, travel at one calm speed, then let the
+       momentum run out over the last 24%. Same intent as the app's inOut token (0.4, 0, 0.2, 1): leave gently, settle for longer. */
+    var ease=(function(a,d){
+      var n=1-a/2-d/2;
+      return function(t){
+        var u;
+        if(t<=0)return 0;if(t>=1)return 1;
+        if(t<a){u=t/a;return a*(u*u*u-u*u*u*u/2)/n}
+        if(t>1-d){u=(1-t)/d;return 1-d*(u*u*u-u*u*u*u/2)/n}
+        return(a/2+t-a)/n;
+      };
+    })(.08,.24);
+    function unease(u){var lo=0,hi=1,p=u,i;for(i=0;i<28;i++){if(ease(p)<u)lo=p;else hi=p;p=(lo+hi)/2}return p}
+
+    var cards=[],per=1,centres=[],lift=[],drawn=[],setW=0,mid=0,base=0,reach=1,pitch=300;
+    var x=0,ax=null,dir=1,p=0,rest=0,synced=true;   /* x: px the track has moved left, kept within one set */
+    var m=0,g=0,v=0,seek=null;                      /* m: glide speed 0..1; g: centre lift 0..1; v: coasting px/s */
+    var started=false,seen=false,off=false,raf=0,last=0;
+    var hover=false,hoverCard=null,focus=false,down=null,dragging=false,holdUntil=0,holdTimer=0;
+
+    function measure(){
+      row.classList.add('pv-js');
+      var sets=track.children,tr=track.getBoundingClientRect(),rr=row.getBoundingClientRect();
+      var w=sets[1].getBoundingClientRect().left-sets[0].getBoundingClientRect().left;
+      if(!(w>0))return false;
+      setW=w;
+      /* enough inert copies that the strip never shows its end, at any width */
+      while(track.children.length<Math.ceil(rr.width/setW)+1&&track.children.length<8)track.appendChild(sets[1].cloneNode(true));
+      cards=Array.prototype.slice.call(track.querySelectorAll('.pv'));
+      per=sets[0].querySelectorAll('.pv').length||1;
+      base=tr.left-rr.left+(ax||0);mid=rr.width/2;
+      centres=cards.map(function(c,i){
+        var r=c.getBoundingClientRect();
+        if(lift[i]==null){lift[i]=0;drawn[i]=0}
+        c.style.setProperty('--i',Math.min(i,3));
+        return r.left-tr.left+r.width/2;
+      });
+      pitch=centres.length>1?centres[1]-centres[0]:setW;reach=pitch*.75;
+      wrap();
+      return true;
+    }
+    /* Each set is a copy of the first, so the strip can be shifted by one set without anything visibly changing. */
+    function wrap(){
+      var k=0,i;
+      while(x>setW){x-=setW;k++}
+      while(x<0){x+=setW;k--}
+      if(!k)return;
+      if(seek!=null)seek-=k*setW;
+      if(down)down.off-=k*setW;
+      var from=lift.slice();
+      for(i=0;i<lift.length;i++)lift[i]=from[i+k*per]||0;
+    }
+    function draw(dt){
+      var a=dt?1-Math.exp(-dt/120):1,moving=false,i,d,w,t;
+      if(ax===null||Math.abs(x-ax)>.005){ax=x;track.style.transform='translate3d('+(-x).toFixed(2)+'px,0,0)'}
+      for(i=0;i<cards.length;i++){
+        d=Math.abs(base+centres[i]-x-mid)/reach;w=d>=1?0:1-d;w=w*w*(3-2*w);
+        t=hoverCard?(cards[i]===hoverCard?1:0):w*g;
+        lift[i]+=(t-lift[i])*a;
+        if(Math.abs(t-lift[i])<.004)lift[i]=t;else moving=true;
+        if(Math.abs(lift[i]-drawn[i])>.003||(lift[i]===t&&drawn[i]!==t)){
+          drawn[i]=lift[i];
+          cards[i].style.transform=lift[i]?'translate3d(0,'+(-LIFT*lift[i]).toFixed(2)+'px,0)':'';
+        }
+      }
+      return moving;
+    }
+    function frame(t){
+      raf=0;
+      var dt=last?Math.min(t-last,50):16;last=t;
+      var free=!dragging&&!v&&seek==null;
+      var want=(free&&!hover&&!focus&&!down&&t>=holdUntil)?1:0;
+      m+=(want-m)*(1-Math.exp(-dt/(want?GO:HALT)));
+      if(!want&&m<.002)m=0;
+      g+=(1-g)*(1-Math.exp(-dt/500));if(g>.998)g=1;
+      if(dragging){/* x follows the pointer */}
+      else if(v){
+        x+=v*dt/1000;v*=Math.exp(-dt/FRICTION);
+        if(Math.abs(v)<6)v=0;
+        wrap();
+      }else if(seek!=null){
+        x+=(seek-x)*(1-Math.exp(-dt/110));
+        if(Math.abs(seek-x)<.4){x=seek;seek=null}
+        wrap();
+      }else{
+        if(!synced){                     /* pick the glide up from wherever the strip was left */
+          var u=Math.min(1,Math.max(0,x/setW));
+          p=unease(dir>0?u:1-u);rest=0;synced=true;
+        }
+        if(rest>0)rest-=dt*want;
+        else{
+          p+=dt/LEG*m;
+          if(p>=1){p=0;dir=-dir;rest=REST}   /* settle, pause, turn round */
+        }
+        x=dir>0?setW*ease(p):setW*(1-ease(p));
+      }
+      var busy=draw(dt)||want||m>0||!free||g<1;   /* !free: one more frame after a coast or a step ends, so the glide can pick up */
+      if(busy)raf=requestAnimationFrame(frame);
+      else{                              /* at rest: sit on a whole device pixel so the type is crisp */
+        var dpr=window.devicePixelRatio||1;x=Math.round(x*dpr)/dpr;synced=false;draw(0);
+      }
+    }
+    function kick(){
+      if(raf||off||!started||!seen||document.hidden)return;
+      last=0;raf=requestAnimationFrame(frame);
+    }
+    function stop(){if(raf)cancelAnimationFrame(raf);raf=0;m=0;v=0}
+    function hold(ms){
+      holdUntil=now()+ms;clearTimeout(holdTimer);holdTimer=setTimeout(kick,ms+20);
+    }
+
+    /* pointer: hover eases the strip to a halt; a sideways drag moves it by hand */
+    row.addEventListener('pointerenter',function(e){if(e.pointerType==='mouse'){hover=true;kick()}});
+    row.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse'){hover=false;hoverCard=null;kick()}});
+    row.addEventListener('pointerover',function(e){
+      if(e.pointerType!=='mouse'||dragging)return;
+      var c=e.target.closest?e.target.closest('.pv'):null;
+      if(c!==hoverCard){hoverCard=c;kick()}
+    });
+    row.addEventListener('pointerdown',function(e){
+      if(off||!started||!e.isPrimary||e.button)return;
+      down={id:e.pointerId,x0:e.clientX,off:x,lx:e.clientX,lt:e.timeStamp,vx:0,touch:e.pointerType!=='mouse'};
+      v=0;seek=null;kick();
+    });
+    row.addEventListener('pointermove',function(e){
+      if(!down||e.pointerId!==down.id)return;
+      if(!dragging){
+        if(Math.abs(e.clientX-down.x0)<8)return;
+        dragging=true;hoverCard=null;synced=false;
+        down.x0=e.clientX;down.off=x;down.lx=e.clientX;down.lt=e.timeStamp;
+        row.classList.add('drag');
+        try{row.setPointerCapture(e.pointerId)}catch(_){}
+      }
+      var dt=e.timeStamp-down.lt;
+      if(dt>0){down.vx=down.vx*.6+(e.clientX-down.lx)/dt*.4;down.lx=e.clientX;down.lt=e.timeStamp}
+      x=down.off-(e.clientX-down.x0);wrap();kick();
+    });
+    function release(e,fling){
+      if(!down||e.pointerId!==down.id)return;
+      if(dragging){
+        dragging=false;row.classList.remove('drag');
+        try{row.releasePointerCapture(e.pointerId)}catch(_){}
+        if(fling&&e.timeStamp-down.lt<90){
+          v=Math.max(-MAXV,Math.min(MAXV,-down.vx*1000));
+          if(Math.abs(v)<40)v=0;else dir=v>0?1:-1;   /* carry on the way it was thrown */
+        }
+        hold(down.touch?1400:300);
+      }
+      down=null;kick();
+    }
+    row.addEventListener('pointerup',function(e){release(e,true)});
+    row.addEventListener('pointercancel',function(e){release(e,false)});
+    row.addEventListener('dragstart',function(e){e.preventDefault()});
+
+    /* keyboard: focus rests the strip; the arrow keys step it one sample at a time */
+    function focused(){try{return row.matches(':focus-visible')}catch(_){return document.activeElement===row}}
+    row.addEventListener('focusin',function(){focus=focused();kick()});
+    row.addEventListener('focusout',function(){focus=false;kick()});
+    row.addEventListener('keydown',function(e){
+      var s=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
+      if(!s||off||!started||e.altKey||e.ctrlKey||e.metaKey)return;
+      e.preventDefault();focus=true;v=0;synced=false;dir=s;
+      seek=(seek==null?x:seek)+s*pitch;kick();
+    });
+
+    /* rest while off-screen and while the tab is hidden */
+    document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else kick()});
+    var again=0,remeasure=function(){
+      if(off||again)return;
+      again=requestAnimationFrame(function(){again=0;if(!off&&measure()){draw(0);kick()}});
+    };
+    if('ResizeObserver' in window)new ResizeObserver(remeasure).observe(row);else addEventListener('resize',remeasure);
+
+    var entered=false,born=now();
+    function begin(){started=true;row.classList.remove('enter');kick()}
+    function enter(quiet){
+      if(entered)return;entered=true;
+      row.classList.add('in');
+      if(quiet){begin();return}
+      row.classList.add('enter');
+      setTimeout(begin,3*70+400+40);     /* the glide starts once the last sample has landed */
+    }
+    new IntersectionObserver(function(es){
+      var e=es[es.length-1];
+      seen=e.isIntersecting;
+      if(!entered){
+        if(e.isIntersecting&&(e.intersectionRatio>=.3||e.intersectionRect.height>=innerHeight*.3)){
+          /* already on screen at load (a very tall window): let the hero go first */
+          var wait=Math.max(0,born+900-now());
+          if(wait)setTimeout(function(){enter(false)},wait);else enter(false);
+        }else if(!e.isIntersecting&&e.boundingClientRect.bottom<0)enter(true);
+      }
+      if(seen)kick();else stop();
+    },{threshold:[0,.3]}).observe(row);
+
+    if(!measure()){row.classList.remove('pv-js');row.classList.add('in');off=true}
+    else draw(0);
+
+    return{
+      off:function(){             /* Reduce Motion switched on mid-visit: stop and hand back to the static CSS layout */
+        off=true;stop();clearTimeout(holdTimer);entered=true;
+        row.classList.remove('pv-js','enter','drag');row.classList.add('in');
+        track.style.transform='';ax=null;x=0;p=0;dir=1;rest=0;synced=true;seek=null;down=null;dragging=false;
+        cards.forEach(function(c,i){c.style.transform='';lift[i]=drawn[i]=0});
+      },
+      on:function(){off=false;started=true;if(measure()){draw(0);kick()}}
+    };
+  })();
+  else if(row)row.classList.add('in');
+
+  /* Reduce Motion can be switched on while the page is open: everything goes to its final state at once. */
+  var onMq=function(){
+    if(mq.matches){
+      root.classList.remove('m');
+      if(st)st.classList.add('go');
+      if(dev)dev.classList.add('now');
+      if(glide)glide.off();
+    }else{
+      root.classList.add('m');
+      if(glide)glide.on();
+    }
+  };
+  if(mq.addEventListener)mq.addEventListener('change',onMq);else if(mq.addListener)mq.addListener(onMq);
+})();
+</script>
+</body>
+</html>
