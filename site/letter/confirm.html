@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Confirm your email | Dear Borough</title>
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/letter.css">
+</head>
+<body>
+<main>
+  <a class="home" href="/"><img src="/assets/lockup-terrace.png" width="168" height="64" alt="Dear Borough London, home"></a>
+
+  <!-- Opening this page changes nothing (mail scanners open links). Only the button confirms. -->
+  <section id="ready" hidden>
+    <h1>Confirm your email</h1>
+    <p class="lede">One more step to start the weekly Letter for Havering.</p>
+    <form id="confirm-form" method="post" action="https://yfviwulzmoqqlzwhphfy.supabase.co/functions/v1/letter-confirm">
+      <input type="hidden" name="t" id="confirm-token" value="">
+      <button class="button" type="submit" id="confirm-btn">Confirm my email</button>
+      <p class="status" id="confirm-status" role="status" aria-live="polite"></p>
+    </form>
+    <p class="note">If you did not ask for the Letter, close this page. Nothing will be sent.</p>
+  </section>
+
+  <section id="bad-link" hidden>
+    <h1>This link has expired.</h1>
+    <p class="lede">Confirmation links work for 7 days. Signing up again sends a new one.</p>
+    <a class="button ghost" href="/">Back to Dear Borough</a>
+  </section>
+
+  <noscript>
+    <h1>Confirm your email</h1>
+    <p class="lede">This page needs JavaScript to confirm your email. Turn JavaScript on, then open the link in the email again.</p>
+  </noscript>
+</main>
+<script src="/assets/letter-confirm.js"></script>
+</body>
+</html>
